@@ -1,0 +1,188 @@
+<div class="admin-reservations-page">
+  <div class="page-header">
+    <div>
+      <h2>Reservations</h2>
+      <p>Manage customer table bookings and food preorders.</p>
+    </div>
+
+    <button
+      class="btn btn-outline-primary btn-sm"
+      type="button"
+      (click)="selectedView === 'TODAY' ? loadTodayReservations() : selectedView === 'DATE' ? searchByDate() : loadAllReservations()"
+    >
+      Refresh
+    </button>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="successMessage" class="alert alert-success">
+    {{ successMessage }}
+  </div>
+
+  <div class="summary-grid">
+    <div class="summary-card">
+      <p>{{ getSummaryTitle() }}</p>
+      <h3>{{ reservations.length }}</h3>
+    </div>
+
+    <div class="summary-card">
+      <p>Total Preorder Amount</p>
+      <h3>₹{{ getTotalPreorderAmount() }}</h3>
+    </div>
+  </div>
+
+  <div class="filter-card">
+    <div class="view-buttons">
+      <button
+        class="btn btn-sm"
+        type="button"
+        [class.btn-primary]="selectedView === 'TODAY'"
+        [class.btn-outline-primary]="selectedView !== 'TODAY'"
+        (click)="loadTodayReservations()"
+      >
+        Today Reservations
+      </button>
+
+      <button
+        class="btn btn-sm"
+        type="button"
+        [class.btn-primary]="selectedView === 'ALL'"
+        [class.btn-outline-primary]="selectedView !== 'ALL'"
+        (click)="loadAllReservations()"
+      >
+        All Reservations
+      </button>
+    </div>
+
+    <div class="date-filter">
+      <div>
+        <label>Reservation Date</label>
+        <input type="date" class="form-control" [(ngModel)]="selectedDate" />
+      </div>
+
+      <button class="btn btn-primary btn-sm" type="button" (click)="searchByDate()">
+        Search
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" class="loading-box">
+    Loading reservations...
+  </div>
+
+  <div *ngIf="!isLoading && reservations.length === 0" class="empty-box">
+    No reservations found.
+  </div>
+
+  <div class="reservation-list" *ngIf="!isLoading && reservations.length > 0">
+    <div class="reservation-card" *ngFor="let reservation of reservations">
+      <div class="reservation-top">
+        <div>
+          <h4>Reservation #{{ reservation.reservationId }}</h4>
+          <p>
+            {{ reservation.customerName }} |
+            {{ reservation.customerEmail }}
+          </p>
+        </div>
+
+        <span class="badge" [ngClass]="getStatusClass(reservation.reservationStatus)">
+          {{ reservation.reservationStatus }}
+        </span>
+      </div>
+
+      <div class="reservation-info">
+        <div>
+          <span>Table</span>
+          <strong>{{ reservation.tableNumber }}</strong>
+        </div>
+
+        <div>
+          <span>Guests</span>
+          <strong>{{ reservation.guestCount }}</strong>
+        </div>
+
+        <div>
+          <span>Date</span>
+          <strong>{{ reservation.reservationDate | date:'mediumDate' }}</strong>
+        </div>
+
+        <div>
+          <span>Time</span>
+          <strong>{{ reservation.reservationTime }}</strong>
+        </div>
+
+        <div>
+          <span>Preorder Amount</span>
+          <strong class="amount">₹{{ reservation.preorderAmount }}</strong>
+        </div>
+
+        <div>
+          <span>Created At</span>
+          <strong>{{ reservation.createdAt | date:'medium' }}</strong>
+        </div>
+      </div>
+
+      <div class="status-actions">
+        <button
+          class="btn btn-sm btn-success"
+          type="button"
+          [disabled]="reservation.reservationStatus === 'CONFIRMED'"
+          (click)="updateStatus(reservation, 'CONFIRMED')"
+        >
+          Confirm
+        </button>
+
+        <button
+          class="btn btn-sm btn-dark"
+          type="button"
+          [disabled]="reservation.reservationStatus === 'COMPLETED'"
+          (click)="updateStatus(reservation, 'COMPLETED')"
+        >
+          Complete
+        </button>
+
+        <button
+          class="btn btn-sm btn-danger"
+          type="button"
+          [disabled]="reservation.reservationStatus === 'CANCELLED'"
+          (click)="updateStatus(reservation, 'CANCELLED')"
+        >
+          Cancel
+        </button>
+      </div>
+
+      <div class="items-section" *ngIf="reservation.items.length > 0">
+        <h5>Preordered Items</h5>
+
+        <div class="table-responsive">
+          <table class="table table-hover align-middle">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Qty</th>
+                <th>Price</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let item of reservation.items">
+                <td>{{ item.itemName }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>₹{{ item.price }}</td>
+                <td>₹{{ item.totalPrice }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="no-items" *ngIf="reservation.items.length === 0">
+        No food items preordered for this reservation.
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,102 @@
+<div class="my-orders-page">
+  <div class="page-header">
+    <div>
+      <h2>My Orders</h2>
+      <p>Track your order status and complete payment.</p>
+    </div>
+
+    <button class="btn btn-outline-primary btn-sm" type="button" (click)="loadMyOrders()">
+      Refresh
+    </button>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="successMessage" class="alert alert-success">
+    {{ successMessage }}
+  </div>
+
+  <div class="orders-card">
+    <div *ngIf="isLoading">
+      Loading your orders...
+    </div>
+
+    <div *ngIf="!isLoading && orders.length === 0" class="empty-box">
+      You have not placed any orders yet.
+    </div>
+
+    <div *ngIf="!isLoading && orders.length > 0" class="order-list">
+      <div class="order-card" *ngFor="let order of orders">
+
+        <div class="order-header">
+          <div>
+            <h5>Order #{{ order.orderId }}</h5>
+            <p>
+              Table: <strong>{{ order.tableNumber }}</strong>
+            </p>
+            <small>{{ order.createdAt | date:'medium' }}</small>
+          </div>
+
+          <div class="order-summary">
+            <span class="badge" [ngClass]="getStatusClass(order.orderStatus)">
+              {{ order.orderStatus }}
+            </span>
+
+            <h5>₹{{ order.totalAmount }}</h5>
+          </div>
+        </div>
+
+        <div class="items-table">
+          <table class="table table-sm align-middle">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Qty</th>
+                <th>Price</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let item of order.items">
+                <td>{{ item.itemName }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>₹{{ item.price }}</td>
+                <td>₹{{ item.totalPrice }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="payment-section" *ngIf="canPay(order)">
+          <p>Complete payment for this order:</p>
+
+          <div class="payment-actions">
+            <button
+              *ngFor="let method of paymentMethods"
+              class="btn btn-sm btn-success"
+              type="button"
+              [disabled]="payingOrderId === order.orderId"
+              (click)="makePayment(order, method)"
+            >
+              Pay by {{ method }}
+            </button>
+          </div>
+        </div>
+
+        <div class="paid-note" *ngIf="order.orderStatus === 'PAID'">
+          <i class="bi bi-check-circle"></i>
+          Payment completed successfully.
+        </div>
+
+        <div class="cancelled-note" *ngIf="order.orderStatus === 'CANCELLED'">
+          <i class="bi bi-x-circle"></i>
+          This order was cancelled.
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

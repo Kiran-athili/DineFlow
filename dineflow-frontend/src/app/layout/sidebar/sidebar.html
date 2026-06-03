@@ -1,0 +1,87 @@
+<aside class="sidebar" [class.closed]="!isOpen">
+  <div class="brand">
+    <h4>DineFlow</h4>
+
+    <a routerLink="/profile" routerLinkActive="active-link" class="profile-link">
+      <i class="bi bi-person-circle"></i>
+      <span>Profile</span>
+    </a>
+  </div>
+
+  <nav class="sidebar-nav">
+    <ng-container *ngIf="role === 'ADMIN'">
+      <a routerLink="/admin/dashboard" routerLinkActive="active-link">
+        <i class="bi bi-speedometer2"></i>
+        <span>Dashboard</span>
+      </a>
+
+      <a routerLink="/admin/menu-categories" routerLinkActive="active-link">
+        <i class="bi bi-tags"></i>
+        <span>Menu Categories</span>
+      </a>
+
+      <a routerLink="/admin/menu-items" routerLinkActive="active-link">
+        <i class="bi bi-card-list"></i>
+        <span>Menu Items</span>
+      </a>
+
+      <a routerLink="/admin/tables" routerLinkActive="active-link">
+        <i class="bi bi-grid-3x3-gap"></i>
+        <span>Tables</span>
+      </a>
+
+      <a routerLink="/admin/orders" routerLinkActive="active-link">
+        <i class="bi bi-bag-check"></i>
+        <span>Orders</span>
+      </a>
+
+      <a routerLink="/admin/payments" routerLinkActive="active-link">
+        <i class="bi bi-currency-rupee"></i>
+        <span>Payments</span>
+      </a>
+
+      <a routerLink="/admin/create-staff" routerLinkActive="active-link">
+        <i class="bi bi-person-plus"></i>
+        <span>Create Staff</span>
+      </a>
+
+      <a routerLink="/admin/reservations" routerLinkActive="active-link">
+  <i class="bi bi-calendar-event"></i>
+  <span>Reservations</span>
+</a>
+    </ng-container>
+
+    <ng-container *ngIf="role === 'CUSTOMER'">
+      <a routerLink="/customer/menu" routerLinkActive="active-link">
+        <i class="bi bi-card-list"></i>
+        <span>Menu</span>
+      </a>
+
+      <a routerLink="/customer/my-orders" routerLinkActive="active-link">
+        <i class="bi bi-receipt"></i>
+        <span>My Orders</span>
+      </a>
+      <a routerLink="/customer/book-reservation" routerLinkActive="active-link">
+  <i class="bi bi-calendar-plus"></i>
+  <span>Book Table</span>
+</a>
+
+<a routerLink="/customer/my-reservations" routerLinkActive="active-link">
+  <i class="bi bi-calendar-check"></i>
+  <span>My Reservations</span>
+</a>
+    </ng-container>
+
+    <ng-container *ngIf="role === 'KITCHEN'">
+      <a routerLink="/kitchen/orders" routerLinkActive="active-link">
+        <i class="bi bi-egg-fried"></i>
+        <span>Kitchen Orders</span>
+      </a>
+    </ng-container>
+  </nav>
+
+  <button class="logout-btn" type="button" (click)="logout()">
+    <i class="bi bi-box-arrow-right"></i>
+    <span>Logout</span>
+  </button>
+</aside>

@@ -1,0 +1,249 @@
+.reservation-page {
+  width: 100%;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.page-header h2 {
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.page-header p {
+  color: #6b7280;
+  margin: 0;
+}
+
+.reservation-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 24px;
+  align-items: start;
+}
+
+.form-card,
+.menu-card,
+.cart-card {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 24px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  margin-bottom: 24px;
+}
+
+.form-card h4,
+.menu-card h4,
+.cart-card h4 {
+  font-weight: 800;
+  margin-bottom: 16px;
+}
+
+label {
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+small {
+  color: #dc2626;
+  display: block;
+  margin-top: 10px;
+}
+
+.btn-primary {
+  background: #f97316;
+  border-color: #f97316;
+}
+
+.btn-primary:hover {
+  background: #ea580c;
+  border-color: #ea580c;
+}
+
+.menu-card p {
+  color: #6b7280;
+}
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 18px;
+}
+
+.menu-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  min-height: 330px;
+}
+
+.food-img,
+.food-no-img {
+  width: 100%;
+  height: 155px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.food-no-img {
+  background: #f3f4f6;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
+
+.food-content {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.food-content h6 {
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+.food-content p {
+  color: #6b7280;
+  font-size: 14px;
+  margin-bottom: 12px;
+  min-height: 42px;
+}
+
+.food-bottom {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.food-bottom strong {
+  color: #f97316;
+  font-weight: 800;
+}
+
+.cart-section {
+  position: sticky;
+  top: 20px;
+}
+
+.cart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.empty-cart {
+  color: #6b7280;
+  text-align: center;
+  padding: 24px 0;
+}
+
+.cart-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.cart-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 12px;
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  gap: 10px;
+  align-items: center;
+}
+
+.cart-food-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cart-food-img,
+.cart-no-img {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.cart-food-img {
+  object-fit: cover;
+}
+
+.cart-no-img {
+  background: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+}
+
+.cart-item h6 {
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.cart-item p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.qty-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.qty-controls button {
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 8px;
+  background: #f97316;
+  color: #ffffff;
+  font-weight: 800;
+}
+
+.remove-btn {
+  border: none;
+  background: transparent;
+  color: #dc2626;
+}
+
+.cart-total {
+  border-top: 1px solid #e5e7eb;
+  margin-top: 18px;
+  padding-top: 16px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 18px;
+}
+
+.cart-total strong {
+  color: #f97316;
+}
+
+@media (max-width: 992px) {
+  .reservation-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .cart-section {
+    position: static;
+  }
+}

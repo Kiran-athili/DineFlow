@@ -1,0 +1,148 @@
+<div class="tables-page">
+  <div class="page-header">
+    <div>
+      <h2>Restaurant Tables</h2>
+      <p>Create and manage table capacity and availability.</p>
+    </div>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="successMessage" class="alert alert-success">
+    {{ successMessage }}
+  </div>
+
+  <div class="form-card">
+    <h4>{{ selectedTableId ? 'Update Table' : 'Create Table' }}</h4>
+
+    <form [formGroup]="tableForm" (ngSubmit)="saveTable()">
+      <div class="row">
+        <div class="col-md-6">
+          <label>Table Number</label>
+          <input
+            class="form-control"
+            formControlName="tableNumber"
+            placeholder="Example: T01"
+          />
+
+          <small *ngIf="tableForm.get('tableNumber')?.touched && tableForm.get('tableNumber')?.invalid">
+            Table number is required
+          </small>
+        </div>
+
+        <div class="col-md-6">
+          <label>Capacity</label>
+          <input
+            type="number"
+            class="form-control"
+            formControlName="capacity"
+            placeholder="Example: 4"
+          />
+
+          <small *ngIf="tableForm.get('capacity')?.touched && tableForm.get('capacity')?.invalid">
+            Capacity must be at least 1
+          </small>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-primary" type="submit">
+          {{ selectedTableId ? 'Update Table' : 'Create Table' }}
+        </button>
+
+        <button class="btn btn-secondary" type="button" (click)="resetForm()">
+          Clear
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="table-card">
+    <div class="table-header">
+      <h4>All Tables</h4>
+      <button class="btn btn-outline-primary btn-sm" (click)="loadTables()">
+        Refresh
+      </button>
+    </div>
+
+    <div *ngIf="isLoading">Loading tables...</div>
+
+    <div *ngIf="!isLoading" class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead>
+          <tr>
+            <th>Table ID</th>
+            <th>Table Number</th>
+            <th>Capacity</th>
+            <th>Status</th>
+            <th>Change Status</th>
+            <th width="180">Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let table of tables">
+            <td>{{ table.tableId }}</td>
+            <td>{{ table.tableNumber }}</td>
+            <td>{{ table.capacity }}</td>
+
+            <td>
+              <span class="badge" [ngClass]="getStatusClass(table.status)">
+                {{ table.status }}
+              </span>
+            </td>
+
+            <td>
+             <div class="status-buttons">
+  <button
+    class="btn btn-sm btn-success"
+    type="button"
+    [disabled]="table.status === 'AVAILABLE'"
+    (click)="changeStatus(table, 'AVAILABLE')"
+  >
+    Available
+  </button>
+
+  <button
+    class="btn btn-sm btn-danger"
+    type="button"
+    [disabled]="table.status === 'OCCUPIED'"
+    (click)="changeStatus(table, 'OCCUPIED')"
+  >
+    Occupied
+  </button>
+
+  <button
+    class="btn btn-sm btn-warning"
+    type="button"
+    [disabled]="table.status === 'RESERVED'"
+    (click)="changeStatus(table, 'RESERVED')"
+  >
+    Reserved
+  </button>
+</div>
+            </td>
+
+            <td>
+              <button class="btn btn-sm btn-warning me-2" (click)="editTable(table)">
+                Edit
+              </button>
+
+              <button class="btn btn-sm btn-danger" (click)="deleteTable(table.tableId)">
+                Delete
+              </button>
+            </td>
+          </tr>
+
+          <tr *ngIf="tables.length === 0">
+            <td colspan="6" class="text-center text-muted">
+              No tables found.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

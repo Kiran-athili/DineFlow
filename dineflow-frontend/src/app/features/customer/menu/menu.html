@@ -1,0 +1,158 @@
+<div class="customer-menu-page">
+  <div class="page-header">
+    <div>
+      <h2>Restaurant Menu</h2>
+      <p>Choose your table, add dishes to cart, and place your order.</p>
+    </div>
+
+    <button class="btn btn-outline-primary btn-sm" type="button" (click)="loadInitialData()">
+      Refresh
+    </button>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="successMessage" class="alert alert-success">
+    {{ successMessage }}
+  </div>
+
+  <div class="menu-layout">
+
+    <div class="menu-section">
+
+      <div class="table-select-card">
+        <label>Select Table</label>
+
+        <select
+          class="form-control"
+          [value]="selectedTableId || ''"
+          (change)="onTableChange($event)"
+        >
+          <option value="">Select available table</option>
+          <option *ngFor="let table of availableTables" [value]="table.tableId">
+            {{ table.tableNumber }} - Capacity {{ table.capacity }}
+          </option>
+        </select>
+
+        <small *ngIf="availableTables.length === 0">
+          No available tables right now.
+        </small>
+      </div>
+
+      <div class="category-card">
+        <button
+          class="btn btn-sm"
+          [class.btn-primary]="selectedCategoryId === null"
+          [class.btn-outline-primary]="selectedCategoryId !== null"
+          (click)="filterByCategory(null)"
+        >
+          All
+        </button>
+
+        <button
+          *ngFor="let category of categories"
+          class="btn btn-sm"
+          [class.btn-primary]="selectedCategoryId === category.categoryId"
+          [class.btn-outline-primary]="selectedCategoryId !== category.categoryId"
+          (click)="filterByCategory(category.categoryId)"
+        >
+          {{ category.categoryName }}
+        </button>
+      </div>
+
+      <div *ngIf="isLoading" class="loading-box">
+        Loading menu items...
+      </div>
+
+      <div *ngIf="!isLoading && filteredItems.length === 0" class="empty-box">
+        No available menu items found.
+      </div>
+
+      <div *ngIf="!isLoading && filteredItems.length > 0" class="items-grid">
+        <div class="menu-item-card" *ngFor="let item of filteredItems">
+          <img
+            *ngIf="item.imageUrl"
+            [src]="getFileUrl(item.imageUrl)"
+            alt="dish"
+          />
+
+          <div class="no-image" *ngIf="!item.imageUrl">
+            No Image
+          </div>
+
+          <div class="item-body">
+            <div class="item-title">
+              <h5>{{ item.itemName }}</h5>
+              <span>₹{{ item.price }}</span>
+            </div>
+
+            <p>{{ item.description }}</p>
+
+            <small>{{ item.category.categoryName }}</small>
+
+            <button class="btn btn-primary w-100 mt-3" type="button" (click)="addToCart(item)">
+              Add to Cart
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cart-section">
+      <div class="cart-card">
+        <div class="cart-header">
+          <h4>Your Cart</h4>
+          <button
+            class="btn btn-sm btn-outline-danger"
+            type="button"
+            [disabled]="cartItems.length === 0"
+            (click)="clearCart()"
+          >
+            Clear
+          </button>
+        </div>
+
+        <div *ngIf="cartItems.length === 0" class="empty-cart">
+          Cart is empty.
+        </div>
+
+        <div class="cart-list" *ngIf="cartItems.length > 0">
+          <div class="cart-item" *ngFor="let item of cartItems">
+            <div>
+              <h6>{{ item.itemName }}</h6>
+              <p>₹{{ item.price }} each</p>
+            </div>
+
+            <div class="qty-controls">
+              <button type="button" (click)="decreaseQuantity(item)">-</button>
+              <span>{{ item.quantity }}</span>
+              <button type="button" (click)="increaseQuantity(item)">+</button>
+            </div>
+
+            <strong>₹{{ item.price * item.quantity }}</strong>
+
+            <button class="remove-btn" type="button" (click)="removeFromCart(item.itemId)">
+              <i class="bi bi-trash"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="cart-total">
+          <span>Total</span>
+          <strong>₹{{ getCartTotal() }}</strong>
+        </div>
+
+        <button
+          class="btn btn-success w-100"
+          type="button"
+          [disabled]="isPlacingOrder || cartItems.length === 0"
+          (click)="placeOrder()"
+        >
+          {{ isPlacingOrder ? 'Placing Order...' : 'Place Order' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

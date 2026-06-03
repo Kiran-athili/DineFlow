@@ -1,0 +1,103 @@
+.kitchen-orders-page {
+  width: 100%;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.page-header h2 {
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.page-header p {
+  color: #6b7280;
+  margin: 0;
+}
+
+.filter-card,
+.orders-card {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  margin-bottom: 24px;
+}
+
+.filter-card {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.empty-box {
+  text-align: center;
+  color: #6b7280;
+  padding: 30px;
+}
+
+.order-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.order-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 18px;
+  background: #ffffff;
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 16px;
+}
+
+.order-header h5 {
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+.order-header p {
+  color: #374151;
+  margin-bottom: 4px;
+}
+
+.order-header small {
+  color: #6b7280;
+}
+
+.order-summary {
+  text-align: right;
+}
+
+.order-summary h5 {
+  margin-top: 10px;
+  font-weight: 800;
+}
+
+.items-table {
+  background: #f9fafb;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.status-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.closed-note {
+  margin-top: 14px;
+  color: #6b7280;
+  font-weight: 600;
+}

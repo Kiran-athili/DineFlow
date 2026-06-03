@@ -1,0 +1,94 @@
+<div class="my-reservations-page">
+  <div class="page-header">
+    <div>
+      <h2>My Reservations</h2>
+      <p>View your table bookings and preorder details.</p>
+    </div>
+
+    <button class="btn btn-outline-primary btn-sm" type="button" (click)="loadMyReservations()">
+      Refresh
+    </button>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="isLoading" class="loading-box">
+    Loading reservations...
+  </div>
+
+  <div *ngIf="!isLoading && reservations.length === 0" class="empty-box">
+    No reservations found.
+  </div>
+
+  <div class="reservation-list" *ngIf="!isLoading && reservations.length > 0">
+    <div class="reservation-card" *ngFor="let reservation of reservations">
+      <div class="reservation-top">
+        <div>
+          <h4>Reservation #{{ reservation.reservationId }}</h4>
+          <p>
+            Table {{ reservation.tableNumber }} |
+            {{ reservation.guestCount }} Guest(s)
+          </p>
+        </div>
+
+        <span class="badge" [ngClass]="getStatusClass(reservation.reservationStatus)">
+          {{ reservation.reservationStatus }}
+        </span>
+      </div>
+
+      <div class="reservation-info">
+        <div>
+          <span>Date</span>
+          <strong>{{ reservation.reservationDate | date:'mediumDate' }}</strong>
+        </div>
+
+        <div>
+          <span>Time</span>
+          <strong>{{ reservation.reservationTime }}</strong>
+        </div>
+
+        <div>
+          <span>Preorder Amount</span>
+          <strong class="amount">₹{{ reservation.preorderAmount }}</strong>
+        </div>
+
+        <div>
+          <span>Booked On</span>
+          <strong>{{ reservation.createdAt | date:'medium' }}</strong>
+        </div>
+      </div>
+
+      <div class="items-section" *ngIf="reservation.items.length > 0">
+        <h5>Preordered Items</h5>
+
+        <div class="table-responsive">
+          <table class="table table-hover align-middle">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Qty</th>
+                <th>Price</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let item of reservation.items">
+                <td>{{ item.itemName }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>₹{{ item.price }}</td>
+                <td>₹{{ item.totalPrice }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="no-items" *ngIf="reservation.items.length === 0">
+        No food items preordered for this reservation.
+      </div>
+    </div>
+  </div>
+</div>

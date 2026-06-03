@@ -1,0 +1,167 @@
+<div class="orders-page">
+  <div class="page-header">
+    <div>
+      <h2>Admin Orders</h2>
+      <p>View all customer orders and update order status.</p>
+    </div>
+
+    <button class="btn btn-outline-primary btn-sm" type="button"  (click)="selectedView === 'TODAY' ? loadTodayOrders() : selectedView === 'PENDING_PAYMENTS' ? loadPendingPayments() : loadAllOrders()">
+      Refresh
+    </button>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="successMessage" class="alert alert-success">
+    {{ successMessage }}
+  </div>
+
+  <div class="view-filter-card">
+  <button
+    class="btn btn-sm"
+    [class.btn-primary]="selectedView === 'TODAY'"
+    [class.btn-outline-primary]="selectedView !== 'TODAY'"
+    type="button"
+    (click)="loadTodayOrders()"
+  >
+    Today Orders
+  </button>
+
+  <button
+    class="btn btn-sm"
+    [class.btn-primary]="selectedView === 'ALL'"
+    [class.btn-outline-primary]="selectedView !== 'ALL'"
+    type="button"
+    (click)="loadAllOrders()"
+  >
+    All Orders
+  </button>
+
+  <button
+    class="btn btn-sm"
+    [class.btn-primary]="selectedView === 'PENDING_PAYMENTS'"
+    [class.btn-outline-primary]="selectedView !== 'PENDING_PAYMENTS'"
+    type="button"
+    (click)="loadPendingPayments()"
+  >
+    Pending Payments
+  </button>
+</div>
+
+  <div class="date-filter-card">
+  <div class="date-field">
+    <label>From Date</label>
+    <input
+      type="date"
+      class="form-control"
+      [(ngModel)]="fromDate"
+    />
+  </div>
+
+  <div class="date-field">
+    <label>To Date</label>
+    <input
+      type="date"
+      class="form-control"
+      [(ngModel)]="toDate"
+    />
+  </div>
+
+  <div class="date-actions">
+    <button class="btn btn-primary btn-sm" type="button" (click)="filterByDateRange()">
+      Search
+    </button>
+
+    <button class="btn btn-secondary btn-sm" type="button" (click)="clearDateFilter()">
+      Clear
+    </button>
+  </div>
+</div>
+
+  <div class="filter-card">
+    <button
+      *ngFor="let status of orderStatuses"
+      type="button"
+      class="btn btn-sm"
+      [class.btn-primary]="selectedStatus === status"
+      [class.btn-outline-primary]="selectedStatus !== status"
+      (click)="filterByStatus(status)"
+    >
+      {{ status }}
+    </button>
+  </div>
+
+  <div class="orders-card">
+    <div *ngIf="isLoading">Loading orders...</div>
+
+    <div *ngIf="!isLoading && orders.length === 0" class="empty-box">
+      No orders found.
+    </div>
+
+    <div *ngIf="!isLoading && orders.length > 0" class="order-list">
+      <div class="order-card" *ngFor="let order of orders">
+
+        <div class="order-header">
+          <div>
+            <h5>Order #{{ order.orderId }}</h5>
+            <p>
+              Customer: <strong>{{ order.customerName }}</strong>
+              |
+              Table: <strong>{{ order.tableNumber }}</strong>
+            </p>
+            <small>{{ order.createdAt | date:'medium' }}</small>
+          </div>
+
+          <div class="order-summary">
+            <span class="badge" [ngClass]="getStatusClass(order.orderStatus)">
+              {{ order.orderStatus }}
+            </span>
+            <h5>₹{{ order.totalAmount }}</h5>
+          </div>
+        </div>
+
+        <div class="items-table">
+          <table class="table table-sm align-middle">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Qty</th>
+                <th>Price</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let item of order.items">
+                <td>{{ item.itemName }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>₹{{ item.price }}</td>
+                <td>₹{{ item.totalPrice }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="status-actions" *ngIf="canUpdate(order)">
+          <button
+            *ngFor="let status of updateStatuses"
+            class="btn btn-sm"
+            type="button"
+            [class.btn-outline-secondary]="order.orderStatus !== status"
+            [class.btn-secondary]="order.orderStatus === status"
+            [disabled]="order.orderStatus === status"
+            (click)="updateStatus(order, status)"
+          >
+            {{ status }}
+          </button>
+        </div>
+
+        <div *ngIf="!canUpdate(order)" class="closed-note">
+          This order is {{ order.orderStatus }} and cannot be updated.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

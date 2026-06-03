@@ -1,0 +1,17 @@
+.app-shell {
+  display: flex;
+  height: 100vh;
+  background: #f8fafc;
+  overflow: hidden;
+}
+
+.main-content {
+  flex: 1;
+  min-width: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.page-content {
+  padding: 24px;
+}

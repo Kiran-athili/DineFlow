@@ -1,0 +1,19 @@
+.unauthorized-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  h2 {
+    color: #c0392b;
+    margin-bottom: 10px;
+  }
+
+  a {
+    margin-top: 15px;
+    text-decoration: none;
+    font-weight: 600;
+  }
+}

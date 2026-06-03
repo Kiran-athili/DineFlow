@@ -1,0 +1,131 @@
+<div class="payments-page">
+  <div class="page-header">
+    <div>
+      <h2>Payments</h2>
+      <p>View all customer payment records and revenue.</p>
+    </div>
+
+    <button class="btn btn-outline-primary btn-sm" type="button" (click)="loadPayments()">
+      Refresh
+    </button>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <div class="view-filter-card">
+  <button
+    class="btn btn-sm"
+    [class.btn-primary]="selectedView === 'TODAY'"
+    [class.btn-outline-primary]="selectedView !== 'TODAY'"
+    type="button"
+    (click)="loadTodayPayments()"
+  >
+    Today Payments
+  </button>
+
+  <button
+    class="btn btn-sm"
+    [class.btn-primary]="selectedView === 'ALL'"
+    [class.btn-outline-primary]="selectedView !== 'ALL'"
+    type="button"
+    (click)="loadAllPayments()"
+  >
+    All Payments
+  </button>
+</div>
+
+  <div class="date-filter-card">
+  <div class="date-field">
+    <label>From Date</label>
+    <input
+      type="date"
+      class="form-control"
+      [(ngModel)]="fromDate"
+    />
+  </div>
+
+  <div class="date-field">
+    <label>To Date</label>
+    <input
+      type="date"
+      class="form-control"
+      [(ngModel)]="toDate"
+    />
+  </div>
+
+  <div class="date-actions">
+    <button class="btn btn-primary btn-sm" type="button" (click)="filterByDateRange()">
+      Search
+    </button>
+
+    <button class="btn btn-secondary btn-sm" type="button" (click)="clearDateFilter()">
+      Clear
+    </button>
+  </div>
+</div>
+
+  <div class="summary-card">
+    <div>
+      <p>Total Payments</p>
+      <h3>{{ payments.length }}</h3>
+    </div>
+
+    <div>
+      <p>Total Revenue</p>
+      <h3>₹{{ getTotalRevenue() }}</h3>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <div class="table-header">
+      <h4>All Payments</h4>
+    </div>
+
+    <div *ngIf="isLoading">
+      Loading payments...
+    </div>
+
+    <div *ngIf="!isLoading && payments.length === 0" class="empty-box">
+      No payments found.
+    </div>
+
+    <div *ngIf="!isLoading && payments.length > 0" class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead>
+          <tr>
+            <th>Payment ID</th>
+            <th>Order ID</th>
+            <th>Customer</th>
+            <th>Method</th>
+            <th>Status</th>
+            <th>Amount</th>
+            <th>Paid At</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let payment of payments">
+            <td>#{{ payment.paymentId }}</td>
+            <td>#{{ payment.orderId }}</td>
+            <td>{{ payment.customerName }}</td>
+            <td>{{ payment.paymentMethod }}</td>
+
+            <td>
+              <span class="badge" [ngClass]="getStatusClass(payment.paymentStatus)">
+                {{ payment.paymentStatus }}
+              </span>
+            </td>
+
+            <td>
+              <strong>₹{{ payment.paidAmount }}</strong>
+            </td>
+
+            <td>{{ payment.paidAt | date:'medium' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

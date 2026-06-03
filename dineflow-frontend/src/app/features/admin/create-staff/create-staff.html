@@ -1,0 +1,221 @@
+<div class="create-staff-page">
+  <div class="page-header">
+    <div>
+      <h2>Create Staff</h2>
+      <p>Create and manage admin or kitchen staff accounts for DineFlow.</p>
+    </div>
+
+    <button class="btn btn-outline-primary btn-sm" type="button" (click)="loadStaff()">
+      Refresh Staff
+    </button>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="successMessage" class="alert alert-success">
+    {{ successMessage }}
+  </div>
+
+  <div class="form-card">
+    <h4>New Staff User</h4>
+
+    <form [formGroup]="staffForm" (ngSubmit)="createStaff()">
+      <div class="row">
+        <div class="col-md-6">
+          <label>Full Name</label>
+          <input
+            class="form-control"
+            formControlName="fullName"
+            placeholder="Enter full name"
+          />
+
+          <small *ngIf="staffForm.get('fullName')?.touched && staffForm.get('fullName')?.invalid">
+            Full name is required
+          </small>
+        </div>
+
+        <div class="col-md-6">
+          <label>Email</label>
+          <input
+            type="email"
+            class="form-control"
+            formControlName="email"
+            placeholder="Enter email"
+          />
+
+          <small *ngIf="staffForm.get('email')?.touched && staffForm.get('email')?.invalid">
+            Valid email is required
+          </small>
+        </div>
+      </div>
+
+      <div class="row mt-3">
+        <div class="col-md-6">
+          <label>Phone</label>
+          <input
+            class="form-control"
+            formControlName="phone"
+            placeholder="Enter phone number"
+          />
+        </div>
+
+        <div class="col-md-6">
+          <label>Role</label>
+          <select class="form-control" formControlName="roleName">
+            <option value="">Select Role</option>
+            <option *ngFor="let role of roles" [value]="role">
+              {{ role }}
+            </option>
+          </select>
+
+          <small *ngIf="staffForm.get('roleName')?.touched && staffForm.get('roleName')?.invalid">
+            Role is required
+          </small>
+        </div>
+      </div>
+
+      <div class="mt-3">
+        <label>Password</label>
+
+        <div class="password-box">
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            class="form-control"
+            formControlName="password"
+            placeholder="Enter password"
+          />
+
+          <button type="button" class="eye-btn" (click)="togglePassword()">
+            <i [class]="showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+          </button>
+        </div>
+
+        <small *ngIf="staffForm.get('password')?.touched && staffForm.get('password')?.invalid">
+          Password must be at least 6 characters
+        </small>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-primary" type="submit" [disabled]="isLoading">
+          {{ isLoading ? 'Creating...' : 'Create Staff' }}
+        </button>
+
+        <button class="btn btn-secondary" type="button" (click)="resetForm()">
+          Clear
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="table-card">
+    <div class="table-header">
+      <div>
+        <h4>Staff Users</h4>
+        <p>View all created admin and kitchen staff accounts.</p>
+      </div>
+    </div>
+
+    <div class="filter-buttons">
+      <button
+        *ngFor="let role of filterRoles"
+        type="button"
+        class="btn btn-sm"
+        [class.btn-primary]="selectedRole === role"
+        [class.btn-outline-primary]="selectedRole !== role"
+        (click)="applyRoleFilter(role)"
+      >
+        {{ role }}
+      </button>
+    </div>
+
+    <div *ngIf="isLoadingStaff">
+      Loading staff users...
+    </div>
+
+    <div *ngIf="!isLoadingStaff && filteredStaffUsers.length === 0" class="empty-box">
+      No staff users found.
+    </div>
+
+    <div *ngIf="!isLoadingStaff && filteredStaffUsers.length > 0" class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead>
+          <tr>
+            <th>User ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Update Status</th>
+            <th>Created At</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let user of filteredStaffUsers">
+            <td>#{{ user.userId }}</td>
+            <td>{{ user.fullName }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.phone || '-' }}</td>
+
+            <td>
+              <span class="badge bg-primary">
+                {{ user.roleName }}
+              </span>
+            </td>
+
+            <td>
+              <span class="badge" [ngClass]="getStaffStatusClass(user.staffStatus)">
+                {{ user.staffStatus }}
+              </span>
+            </td>
+
+            <td>
+              <div class="staff-status-buttons">
+                <button
+                  class="btn btn-sm btn-success"
+                  type="button"
+                  [disabled]="user.staffStatus === 'ACTIVE'"
+                  (click)="updateStaffStatus(user, 'ACTIVE')"
+                >
+                  Active
+                </button>
+
+                <button
+                  class="btn btn-sm btn-warning"
+                  type="button"
+                  [disabled]="user.staffStatus === 'ON_LEAVE'"
+                  (click)="updateStaffStatus(user, 'ON_LEAVE')"
+                >
+                  On Leave
+                </button>
+
+                <button
+                  class="btn btn-sm btn-danger"
+                  type="button"
+                  [disabled]="user.staffStatus === 'INACTIVE'"
+                  (click)="updateStaffStatus(user, 'INACTIVE')"
+                >
+                  Inactive
+                </button>
+
+                <button
+                  class="btn btn-sm btn-dark"
+                  type="button"
+                  [disabled]="user.staffStatus === 'EXITED'"
+                  (click)="updateStaffStatus(user, 'EXITED')"
+                >
+                  Exited
+                </button>
+              </div>
+            </td>
+
+            <td>{{ user.createdAt | date:'medium' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

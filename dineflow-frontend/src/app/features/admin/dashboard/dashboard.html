@@ -1,0 +1,248 @@
+<div class="dashboard-page">
+  <div class="page-header">
+    <div>
+      <h2>Admin Dashboard</h2>
+      <p>Overview of restaurant orders, revenue, customers, and top selling dishes.</p>
+    </div>
+
+    <button class="refresh-btn" type="button" (click)="loadDashboard()">
+      <i class="bi bi-arrow-clockwise"></i>
+      Refresh
+    </button>
+  </div>
+
+  <div *ngIf="isLoading" class="loading-box">
+    Loading dashboard...
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <ng-container *ngIf="summary && analytics && !isLoading">
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="icon green">
+          <i class="bi bi-currency-rupee"></i>
+        </div>
+        <div>
+          <p>Today Revenue</p>
+          <h3>₹{{ summary.todayRevenue }}</h3>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="icon blue">
+          <i class="bi bi-calendar-month"></i>
+        </div>
+        <div>
+          <p>This Month Revenue</p>
+          <h3>₹{{ summary.thisMonthRevenue }}</h3>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="icon orange">
+          <i class="bi bi-graph-up-arrow"></i>
+        </div>
+        <div>
+          <p>Total Revenue</p>
+          <h3>₹{{ summary.totalRevenue }}</h3>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="icon purple">
+          <i class="bi bi-receipt"></i>
+        </div>
+        <div>
+          <p>Today Orders</p>
+          <h3>{{ summary.todayOrders }}</h3>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="icon warning">
+          <i class="bi bi-hourglass-split"></i>
+        </div>
+        <div>
+          <p>Orders Awaiting Action</p>
+          <h3>{{ summary.totalPendingOrders }}</h3>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="icon dark">
+          <i class="bi bi-wallet2"></i>
+        </div>
+        <div>
+          <p>Unpaid Orders</p>
+          <h3>{{ summary.totalPendingPayments }}</h3>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="icon success">
+          <i class="bi bi-check-circle"></i>
+        </div>
+        <div>
+          <p>Paid Orders</p>
+          <h3>{{ summary.totalPaidOrders }}</h3>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="icon black">
+          <i class="bi bi-people"></i>
+        </div>
+        <div>
+          <p>Total Customers</p>
+          <h3>{{ summary.totalCustomers }}</h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="charts-grid">
+
+      <div class="chart-card">
+        <div class="chart-header">
+          <div>
+            <h4>Sales / Revenue Trend</h4>
+            <p>Revenue performance by day, month, and year.</p>
+          </div>
+
+          <div class="chart-tabs">
+            <button
+              type="button"
+              [class.active]="selectedRevenueView === 'DAILY'"
+              (click)="selectedRevenueView = 'DAILY'"
+            >
+              Day
+            </button>
+
+            <button
+              type="button"
+              [class.active]="selectedRevenueView === 'MONTHLY'"
+              (click)="selectedRevenueView = 'MONTHLY'"
+            >
+              Month
+            </button>
+
+            <button
+              type="button"
+              [class.active]="selectedRevenueView === 'YEARLY'"
+              (click)="selectedRevenueView = 'YEARLY'"
+            >
+              Year
+            </button>
+          </div>
+        </div>
+
+        <div *ngIf="getRevenueChartData().length === 0" class="empty-chart">
+          No revenue data available.
+        </div>
+
+        <div *ngIf="getRevenueChartData().length > 0" class="bar-chart">
+          <div class="bar-item" *ngFor="let point of getRevenueChartData()">
+            <div class="bar-value">₹{{ point.value }}</div>
+            <div
+              class="bar revenue-bar"
+              [style.height.px]="getBarHeight(point.value, getRevenueChartData())"
+            ></div>
+            <div class="bar-label">{{ getShortLabel(point.label) }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-header">
+          <div>
+            <h4>Customer Growth</h4>
+            <p>New customers registered by day, month, and year.</p>
+          </div>
+
+          <div class="chart-tabs">
+            <button
+              type="button"
+              [class.active]="selectedCustomerView === 'DAILY'"
+              (click)="selectedCustomerView = 'DAILY'"
+            >
+              Day
+            </button>
+
+            <button
+              type="button"
+              [class.active]="selectedCustomerView === 'MONTHLY'"
+              (click)="selectedCustomerView = 'MONTHLY'"
+            >
+              Month
+            </button>
+
+            <button
+              type="button"
+              [class.active]="selectedCustomerView === 'YEARLY'"
+              (click)="selectedCustomerView = 'YEARLY'"
+            >
+              Year
+            </button>
+          </div>
+        </div>
+
+        <div *ngIf="getCustomerChartData().length === 0" class="empty-chart">
+          No customer data available.
+        </div>
+
+        <div *ngIf="getCustomerChartData().length > 0" class="bar-chart">
+          <div class="bar-item" *ngFor="let point of getCustomerChartData()">
+            <div class="bar-value">{{ point.value }}</div>
+            <div
+              class="bar customer-bar"
+              [style.height.px]="getBarHeight(point.value, getCustomerChartData())"
+            ></div>
+            <div class="bar-label">{{ getShortLabel(point.label) }}</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="top-dishes-card">
+      <div class="chart-header">
+        <div>
+          <h4>Top Selling Dishes</h4>
+          <p>Most ordered dishes based on quantity sold.</p>
+        </div>
+      </div>
+
+      <div *ngIf="analytics.topSellingDishes.length === 0" class="empty-chart">
+        No dish sales data available.
+      </div>
+
+      <div class="dish-list" *ngIf="analytics.topSellingDishes.length > 0">
+        <div class="dish-row" *ngFor="let dish of analytics.topSellingDishes; let i = index">
+          <div class="dish-rank">#{{ i + 1 }}</div>
+
+          <div class="dish-info">
+            <div class="dish-title">
+              <strong>{{ dish.itemName }}</strong>
+              <span>{{ dish.totalQuantitySold }} sold</span>
+            </div>
+
+            <div class="dish-progress">
+              <div
+                class="dish-progress-fill"
+                [style.width.%]="getDishPercentage(dish.totalQuantitySold)"
+              ></div>
+            </div>
+          </div>
+
+          <div class="dish-revenue">
+            ₹{{ dish.totalRevenue }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </ng-container>
+</div>

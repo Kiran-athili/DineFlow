@@ -1,0 +1,23 @@
+<header class="app-header">
+  <div class="header-left">
+    <button class="menu-btn" type="button" (click)="onMenuClick()">
+      <i class="bi bi-list"></i>
+    </button>
+
+    <div>
+      <h5>DineFlow</h5>
+      <small>Virtual Restaurant Platform</small>
+    </div>
+  </div>
+
+  <div class="header-user">
+    <div class="user-avatar">
+      {{ initials }}
+    </div>
+
+    <div class="user-info">
+      <strong>{{ fullName }}</strong>
+      <span>{{ role }}</span>
+    </div>
+  </div>
+</header>

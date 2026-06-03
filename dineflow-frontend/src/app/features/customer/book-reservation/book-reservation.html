@@ -1,0 +1,171 @@
+<div class="reservation-page">
+  <div class="page-header">
+    <div>
+      <h2>Book Table</h2>
+      <p>Reserve a table in advance and optionally preorder food.</p>
+    </div>
+
+    <button class="btn btn-outline-primary btn-sm" type="button" (click)="loadData()">
+      Refresh
+    </button>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="successMessage" class="alert alert-success">
+    {{ successMessage }}
+  </div>
+
+  <div class="reservation-layout">
+    <div class="left-section">
+      <div class="form-card">
+        <h4>Reservation Details</h4>
+
+        <form [formGroup]="reservationForm" (ngSubmit)="bookReservation()">
+          <div class="row">
+            <div class="col-md-6">
+              <label>Select Table</label>
+              <select class="form-control" formControlName="tableId">
+                <option value="">Select table</option>
+                <option *ngFor="let table of tables" [value]="table.tableId">
+                  {{ table.tableNumber }} - Capacity {{ table.capacity }}
+                </option>
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label>Guest Count</label>
+              <input type="number" class="form-control" formControlName="guestCount" />
+            </div>
+          </div>
+
+          <div class="row mt-3">
+            <div class="col-md-6">
+              <label>Reservation Date</label>
+              <input
+                type="date"
+                class="form-control"
+                formControlName="reservationDate"
+                [min]="minDate"
+              />
+            </div>
+
+            <div class="col-md-6">
+              <label>Reservation Time</label>
+              <input type="time" class="form-control" formControlName="reservationTime" />
+            </div>
+          </div>
+
+          <small *ngIf="reservationForm.invalid && reservationForm.touched">
+            Please fill all reservation details correctly.
+          </small>
+
+          <button
+            class="btn btn-success w-100 mt-4"
+            type="submit"
+            [disabled]="isBooking"
+          >
+            {{ isBooking ? 'Booking...' : 'Book Reservation' }}
+          </button>
+        </form>
+      </div>
+
+      <div class="menu-card">
+        <h4>Preorder Food</h4>
+        <p>Select food items if you want them prepared for your visit.</p>
+
+        <div *ngIf="isLoading">Loading menu...</div>
+
+        <div class="menu-grid" *ngIf="!isLoading">
+          <div class="menu-item" *ngFor="let item of menuItems">
+            <img
+              *ngIf="item.imageUrl"
+              [src]="getFileUrl(item.imageUrl)"
+              alt="food"
+              class="food-img"
+            />
+
+            <div *ngIf="!item.imageUrl" class="food-no-img">
+              No Image
+            </div>
+
+            <div class="food-content">
+              <h6>{{ item.itemName }}</h6>
+              <p>{{ item.description }}</p>
+
+              <div class="food-bottom">
+                <strong>₹{{ item.price }}</strong>
+
+                <button class="btn btn-sm btn-primary" type="button" (click)="addToCart(item)">
+                  Add
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cart-section">
+      <div class="cart-card">
+        <div class="cart-header">
+          <h4>Preorder Cart</h4>
+
+          <button
+            class="btn btn-sm btn-outline-danger"
+            type="button"
+            [disabled]="cartItems.length === 0"
+            (click)="clearCart()"
+          >
+            Clear
+          </button>
+        </div>
+
+        <div *ngIf="cartItems.length === 0" class="empty-cart">
+          No food items selected. You can book table without preorder too.
+        </div>
+
+        <div class="cart-list" *ngIf="cartItems.length > 0">
+          <div class="cart-item" *ngFor="let item of cartItems">
+            <div class="cart-food-info">
+              <img
+                *ngIf="item.imageUrl"
+                [src]="getFileUrl(item.imageUrl)"
+                alt="food"
+                class="cart-food-img"
+              />
+
+              <div *ngIf="!item.imageUrl" class="cart-no-img">
+                <i class="bi bi-image"></i>
+              </div>
+
+              <div>
+                <h6>{{ item.itemName }}</h6>
+                <p>₹{{ item.price }} each</p>
+              </div>
+            </div>
+
+            <div class="qty-controls">
+              <button type="button" (click)="decreaseQuantity(item)">-</button>
+              <span>{{ item.quantity }}</span>
+              <button type="button" (click)="increaseQuantity(item)">+</button>
+            </div>
+
+            <strong>₹{{ item.price * item.quantity }}</strong>
+
+            <button class="remove-btn" type="button" (click)="removeItem(item.itemId)">
+              <i class="bi bi-trash"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="cart-total">
+          <span>Preorder Amount</span>
+          <strong>₹{{ getTotalAmount() }}</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,206 @@
+<div class="menu-items-page">
+  <div class="page-header">
+    <div>
+      <h2>Menu Items</h2>
+      <p>Create and manage dishes with images, videos, price, and availability.</p>
+    </div>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="successMessage" class="alert alert-success">
+    {{ successMessage }}
+  </div>
+
+  <div class="form-card">
+    <h4>{{ selectedItemId ? 'Update Menu Item' : 'Create Menu Item' }}</h4>
+
+    <form [formGroup]="itemForm" (ngSubmit)="saveItem()">
+
+      <div class="row">
+        <div class="col-md-6">
+          <label>Item Name</label>
+          <input
+            class="form-control"
+            formControlName="itemName"
+            placeholder="Example: Paneer Tikka"
+          />
+
+          <small *ngIf="itemForm.get('itemName')?.touched && itemForm.get('itemName')?.invalid">
+            Item name is required
+          </small>
+        </div>
+
+        <div class="col-md-3">
+          <label>Price</label>
+          <input
+            type="number"
+            class="form-control"
+            formControlName="price"
+            placeholder="Price"
+          />
+
+          <small *ngIf="itemForm.get('price')?.touched && itemForm.get('price')?.invalid">
+            Valid price is required
+          </small>
+        </div>
+
+        <div class="col-md-3">
+          <label>Category</label>
+          <select class="form-control" formControlName="categoryId">
+            <option value="">Select Category</option>
+            <option
+              *ngFor="let category of categories"
+              [value]="category.categoryId"
+            >
+              {{ category.categoryName }}
+            </option>
+          </select>
+
+          <small *ngIf="itemForm.get('categoryId')?.touched && itemForm.get('categoryId')?.invalid">
+            Category is required
+          </small>
+        </div>
+      </div>
+
+      <div class="mt-3">
+        <label>Description</label>
+        <textarea
+          class="form-control"
+          rows="3"
+          formControlName="description"
+          placeholder="Short description"
+        ></textarea>
+      </div>
+
+      <div class="row mt-3">
+        <div class="col-md-6">
+          <label>Dish Image</label>
+          <input
+            type="file"
+            class="form-control"
+            accept="image/*"
+            (change)="onImageSelected($event)"
+          />
+
+          <small *ngIf="isUploadingImage">Uploading image...</small>
+        </div>
+
+        <div class="col-md-6">
+          <label>Dish Video</label>
+          <input
+            type="file"
+            class="form-control"
+            accept="video/*"
+            (change)="onVideoSelected($event)"
+          />
+
+          <small *ngIf="isUploadingVideo">Uploading video...</small>
+        </div>
+      </div>
+
+      <div class="preview-row">
+        <div *ngIf="imagePreview" class="preview-box">
+          <p>Image Preview</p>
+          <img [src]="imagePreview" alt="Dish Image" />
+        </div>
+
+        <div *ngIf="videoPreview" class="preview-box">
+          <p>Video Preview</p>
+          <video [src]="videoPreview" controls></video>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button
+          class="btn btn-primary"
+          type="submit"
+          [disabled]="isUploadingImage || isUploadingVideo"
+        >
+          {{ selectedItemId ? 'Update Item' : 'Create Item' }}
+        </button>
+
+        <button class="btn btn-secondary" type="button" (click)="resetForm()">
+          Clear
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="table-card">
+    <div class="table-header">
+      <h4>All Menu Items</h4>
+      <button class="btn btn-outline-primary btn-sm" (click)="loadItems()">
+        Refresh
+      </button>
+    </div>
+
+    <div *ngIf="isLoading">Loading menu items...</div>
+
+    <div *ngIf="!isLoading" class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead>
+          <tr>
+            <th>Image</th>
+            <th>Item</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Available</th>
+            <th width="220">Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let item of items">
+            <td>
+              <img
+                *ngIf="item.imageUrl"
+                [src]="getFileUrl(item.imageUrl)"
+                class="item-img"
+                alt="item"
+              />
+
+              <span *ngIf="!item.imageUrl">No Image</span>
+            </td>
+
+            <td>
+              <strong>{{ item.itemName }}</strong>
+              <p>{{ item.description }}</p>
+            </td>
+
+            <td>{{ item.category.categoryName }}</td>
+
+            <td>₹{{ item.price }}</td>
+
+            <td>
+              <span
+                class="badge"
+                [class.bg-success]="item.isAvailable"
+                [class.bg-danger]="!item.isAvailable"
+              >
+                {{ item.isAvailable ? 'Available' : 'Unavailable' }}
+              </span>
+            </td>
+
+            <td>
+              <button class="btn btn-sm btn-warning me-2" (click)="editItem(item)">
+                Edit
+              </button>
+
+              <button
+                class="btn btn-sm"
+                [class.btn-danger]="item.isAvailable"
+                [class.btn-success]="!item.isAvailable"
+                (click)="updateAvailability(item)"
+              >
+                {{ item.isAvailable ? 'Disable' : 'Enable' }}
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,135 @@
+<div class="profile-page">
+  <div class="page-header">
+    <div>
+      <h2>My Profile</h2>
+      <p>View your account details, update profile, and change password.</p>
+    </div>
+
+    <button class="btn btn-outline-primary btn-sm" type="button" (click)="loadProfile()">
+      Refresh
+    </button>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="successMessage" class="alert alert-success">
+    {{ successMessage }}
+  </div>
+
+  <div *ngIf="isLoadingProfile" class="loading-card">
+    Loading profile...
+  </div>
+
+  <div *ngIf="!isLoadingProfile" class="profile-grid">
+
+    <div class="profile-card">
+      <h4>Account Details</h4>
+
+      <div class="avatar">
+        {{ profile?.fullName?.charAt(0) || 'U' }}
+      </div>
+
+      <div class="detail-row">
+        <span>Name</span>
+        <strong>{{ profile?.fullName }}</strong>
+      </div>
+
+      <div class="detail-row">
+        <span>Email</span>
+        <strong>{{ profile?.email }}</strong>
+      </div>
+
+      <div class="detail-row">
+        <span>Role</span>
+        <strong>{{ profile?.role }}</strong>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <h4>Update Profile</h4>
+
+      <form [formGroup]="profileForm" (ngSubmit)="updateProfile()">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input
+            class="form-control"
+            formControlName="fullName"
+            placeholder="Enter full name"
+          />
+
+          <small *ngIf="profileForm.get('fullName')?.touched && profileForm.get('fullName')?.invalid">
+            Full name is required
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label>Phone</label>
+          <input
+            class="form-control"
+            formControlName="phone"
+            placeholder="Enter phone number"
+          />
+        </div>
+
+        <button class="btn btn-primary" type="submit" [disabled]="isUpdatingProfile">
+          {{ isUpdatingProfile ? 'Updating...' : 'Update Profile' }}
+        </button>
+      </form>
+    </div>
+
+    <div class="form-card">
+      <h4>Change Password</h4>
+
+      <form [formGroup]="passwordForm" (ngSubmit)="changePassword()">
+        <div class="form-group">
+          <label>Current Password</label>
+
+          <div class="password-box">
+            <input
+              [type]="showCurrentPassword ? 'text' : 'password'"
+              class="form-control"
+              formControlName="currentPassword"
+              placeholder="Enter current password"
+            />
+
+            <button type="button" class="eye-btn" (click)="toggleCurrentPassword()">
+              <i [class]="showCurrentPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+            </button>
+          </div>
+
+          <small *ngIf="passwordForm.get('currentPassword')?.touched && passwordForm.get('currentPassword')?.invalid">
+            Current password is required
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label>New Password</label>
+
+          <div class="password-box">
+            <input
+              [type]="showNewPassword ? 'text' : 'password'"
+              class="form-control"
+              formControlName="newPassword"
+              placeholder="Enter new password"
+            />
+
+            <button type="button" class="eye-btn" (click)="toggleNewPassword()">
+              <i [class]="showNewPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+            </button>
+          </div>
+
+          <small *ngIf="passwordForm.get('newPassword')?.touched && passwordForm.get('newPassword')?.invalid">
+            New password must be at least 6 characters
+          </small>
+        </div>
+
+        <button class="btn btn-danger" type="submit" [disabled]="isChangingPassword">
+          {{ isChangingPassword ? 'Changing...' : 'Change Password' }}
+        </button>
+      </form>
+    </div>
+
+  </div>
+</div>
