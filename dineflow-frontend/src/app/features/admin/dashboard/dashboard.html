@@ -2,7 +2,7 @@
   <div class="page-header">
     <div>
       <h2>Admin Dashboard</h2>
-      <p>Overview of restaurant orders, revenue, customers, and top selling dishes.</p>
+      <p>Today’s restaurant operations, revenue, reservations, tables, and sales insights.</p>
     </div>
 
     <button class="refresh-btn" type="button" (click)="loadDashboard()">
@@ -21,90 +21,218 @@
 
   <ng-container *ngIf="summary && analytics && !isLoading">
 
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="icon green">
-          <i class="bi bi-currency-rupee"></i>
-        </div>
+    <!-- TODAY ORDERS -->
+    <div class="dashboard-section">
+      <div class="section-title">
         <div>
-          <p>Today Revenue</p>
-          <h3>₹{{ summary.todayRevenue }}</h3>
+          <h4>Today Orders</h4>
+          <p>Current order activity for today.</p>
         </div>
       </div>
 
-      <div class="stat-card">
-        <div class="icon blue">
-          <i class="bi bi-calendar-month"></i>
+      <div class="stats-grid three-row">
+        <div class="stat-card">
+          <div class="icon purple">
+            <i class="bi bi-receipt"></i>
+          </div>
+          <div>
+            <p>Total Orders</p>
+            <h3>{{ summary.todayOrders }}</h3>
+          </div>
         </div>
-        <div>
-          <p>This Month Revenue</p>
-          <h3>₹{{ summary.thisMonthRevenue }}</h3>
-        </div>
-      </div>
 
-      <div class="stat-card">
-        <div class="icon orange">
-          <i class="bi bi-graph-up-arrow"></i>
+        <div class="stat-card">
+          <div class="icon success">
+            <i class="bi bi-check-circle"></i>
+          </div>
+          <div>
+            <p>Served Orders</p>
+            <h3>{{ summary.todayServedOrders }}</h3>
+          </div>
         </div>
-        <div>
-          <p>Total Revenue</p>
-          <h3>₹{{ summary.totalRevenue }}</h3>
-        </div>
-      </div>
 
-      <div class="stat-card">
-        <div class="icon purple">
-          <i class="bi bi-receipt"></i>
-        </div>
-        <div>
-          <p>Today Orders</p>
-          <h3>{{ summary.todayOrders }}</h3>
-        </div>
-      </div>
-
-      <div class="stat-card">
-        <div class="icon warning">
-          <i class="bi bi-hourglass-split"></i>
-        </div>
-        <div>
-          <p>Orders Awaiting Action</p>
-          <h3>{{ summary.totalPendingOrders }}</h3>
-        </div>
-      </div>
-
-      <div class="stat-card">
-        <div class="icon dark">
-          <i class="bi bi-wallet2"></i>
-        </div>
-        <div>
-          <p>Unpaid Orders</p>
-          <h3>{{ summary.totalPendingPayments }}</h3>
-        </div>
-      </div>
-
-      <div class="stat-card">
-        <div class="icon success">
-          <i class="bi bi-check-circle"></i>
-        </div>
-        <div>
-          <p>Paid Orders</p>
-          <h3>{{ summary.totalPaidOrders }}</h3>
-        </div>
-      </div>
-
-      <div class="stat-card">
-        <div class="icon black">
-          <i class="bi bi-people"></i>
-        </div>
-        <div>
-          <p>Total Customers</p>
-          <h3>{{ summary.totalCustomers }}</h3>
+        <div class="stat-card">
+          <div class="icon warning">
+            <i class="bi bi-hourglass-split"></i>
+          </div>
+          <div>
+            <p>Unserved Orders</p>
+            <h3>{{ summary.todayUnservedOrders }}</h3>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="charts-grid">
+    <!-- TODAY RESERVATIONS -->
+    <div class="dashboard-section">
+      <div class="section-title">
+        <div>
+          <h4>Today Reservations</h4>
+          <p>Today’s table bookings and reservation status.</p>
+        </div>
+      </div>
 
+      <div class="stats-grid three-row">
+        <div class="stat-card">
+          <div class="icon blue">
+            <i class="bi bi-calendar-check"></i>
+          </div>
+          <div>
+            <p>Total Reservations</p>
+            <h3>{{ summary.todayReservations }}</h3>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="icon success">
+            <i class="bi bi-check2-square"></i>
+          </div>
+          <div>
+            <p>Served Reservations</p>
+            <h3>{{ summary.todayServedReservations }}</h3>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="icon warning">
+            <i class="bi bi-calendar-event"></i>
+          </div>
+          <div>
+            <p>Unserved Reservations</p>
+            <h3>{{ summary.todayUnservedReservations }}</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CURRENT TABLE STATUS -->
+    <div class="dashboard-section">
+      <div class="section-title">
+        <div>
+          <h4>Current Table Status</h4>
+          <p>Live table availability based on occupied and reserved tables.</p>
+        </div>
+      </div>
+
+      <div class="stats-grid three-row">
+        <div class="stat-card">
+          <div class="icon black">
+            <i class="bi bi-grid-3x3-gap"></i>
+          </div>
+          <div>
+            <p>Total Tables</p>
+            <h3>{{ summary.totalTables }}</h3>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="icon dark">
+            <i class="bi bi-person-fill-lock"></i>
+          </div>
+          <div>
+            <p>Reserved / Occupied</p>
+            <h3>{{ summary.reservedOrOccupiedTables }}</h3>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="icon green">
+            <i class="bi bi-check-lg"></i>
+          </div>
+          <div>
+            <p>Available Tables</p>
+            <h3>{{ summary.availableTables }}</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TODAY BILLS / PAYMENTS -->
+    <div class="dashboard-section">
+      <div class="section-title">
+        <div>
+          <h4>Today Bills / Payments</h4>
+          <p>Billing and payment status for today’s orders.</p>
+        </div>
+      </div>
+
+      <div class="stats-grid three-row">
+        <div class="stat-card">
+          <div class="icon orange">
+            <i class="bi bi-file-earmark-text"></i>
+          </div>
+          <div>
+            <p>Total Bills</p>
+            <h3>{{ summary.todayTotalBills }}</h3>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="icon success">
+            <i class="bi bi-credit-card"></i>
+          </div>
+          <div>
+            <p>Paid Bills</p>
+            <h3>{{ summary.todayPaidBills }}</h3>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="icon warning">
+            <i class="bi bi-wallet2"></i>
+          </div>
+          <div>
+            <p>Unpaid Bills</p>
+            <h3>{{ summary.todayUnpaidBills }}</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REVENUE & BUSINESS -->
+    <div class="dashboard-section">
+      <div class="section-title">
+        <div>
+          <h4>Revenue & Business</h4>
+          <p>Quick revenue and customer summary.</p>
+        </div>
+      </div>
+
+      <div class="stats-grid three-row">
+        <div class="stat-card">
+          <div class="icon green">
+            <i class="bi bi-currency-rupee"></i>
+          </div>
+          <div>
+            <p>Today Revenue</p>
+            <h3>₹{{ summary.todayRevenue }}</h3>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="icon blue">
+            <i class="bi bi-calendar-month"></i>
+          </div>
+          <div>
+            <p>This Month Revenue</p>
+            <h3>₹{{ summary.thisMonthRevenue }}</h3>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="icon black">
+            <i class="bi bi-people"></i>
+          </div>
+          <div>
+            <p>Total Customers</p>
+            <h3>{{ summary.totalCustomers }}</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHARTS -->
+    <div class="charts-grid">
       <div class="chart-card">
         <div class="chart-header">
           <div>
@@ -204,9 +332,9 @@
           </div>
         </div>
       </div>
-
     </div>
 
+    <!-- TOP SELLING DISHES -->
     <div class="top-dishes-card">
       <div class="chart-header">
         <div>

@@ -17,6 +17,7 @@ import com.dineflow.backend.repository.OrderItemRepository;
 import com.dineflow.backend.repository.PaymentRepository;
 import com.dineflow.backend.repository.RestaurantOrderRepository;
 import com.dineflow.backend.repository.RestaurantTableRepository;
+import com.dineflow.backend.repository.TableReservationRepository;
 import com.dineflow.backend.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -31,7 +32,7 @@ public class DashboardService {
     private final RestaurantTableRepository tableRepository;
     private final PaymentRepository paymentRepository;
     private final OrderItemRepository orderItemRepository;
-
+    private final TableReservationRepository reservationRepository;
     public DashboardResponse getAdminDashboard() {
 
         Long totalOrders = orderRepository.count();
@@ -123,41 +124,65 @@ public class DashboardService {
     BigDecimal thisMonthRevenue = paymentRepository.getRevenueBetween(monthStart, monthEnd);
     BigDecimal totalRevenue = paymentRepository.getTotalRevenue();
 
-    Long todayOrders = orderRepository.countByCreatedAtBetween(todayStart, todayEnd);
-    Long thisMonthOrders = orderRepository.countByCreatedAtBetween(monthStart, monthEnd);
-    Long totalOrders = orderRepository.count();
-
-    Long todayPendingOrders = orderRepository.countByOrderStatusAndCreatedAtBetween(
-            "PLACED",
+    Long todayOrders = orderRepository.countByCreatedAtBetweenAndOrderStatusNotIn(
             todayStart,
-            todayEnd
+            todayEnd,
+            List.of("CANCELLED")
     );
 
-    Long totalPendingOrders = orderRepository.countByOrderStatus("PLACED");
-
-    Long todayPaidOrders = orderRepository.countByOrderStatusAndCreatedAtBetween(
-            "PAID",
+    Long todayServedOrders = orderRepository.countByCreatedAtBetweenAndOrderStatusIn(
             todayStart,
-            todayEnd
+            todayEnd,
+            List.of("SERVED", "PAID")
     );
 
-    Long totalPaidOrders = orderRepository.countByOrderStatus("PAID");
+    Long todayUnservedOrders = orderRepository.countByCreatedAtBetweenAndOrderStatusIn(
+            todayStart,
+            todayEnd,
+            List.of("PLACED", "ACCEPTED", "PREPARING", "READY")
+    );
 
-    Long todayPendingPayments = (long) orderRepository
-            .findByOrderStatusNotInAndCreatedAtBetweenOrderByCreatedAtDesc(
-                    List.of("PAID", "CANCELLED"),
-                    todayStart,
-                    todayEnd
-            )
-            .size();
+    Long todayReservations = reservationRepository.countByReservationDateAndReservationStatusIn(
+            today,
+            List.of("BOOKED", "CONFIRMED", "COMPLETED")
+    );
 
-    Long totalPendingPayments = (long) orderRepository
-            .findByOrderStatusNotInOrderByCreatedAtDesc(List.of("PAID", "CANCELLED"))
-            .size();
+    Long todayServedReservations = reservationRepository.countByReservationDateAndReservationStatusIn(
+            today,
+            List.of("COMPLETED")
+    );
+
+    Long todayUnservedReservations = reservationRepository.countByReservationDateAndReservationStatusIn(
+            today,
+            List.of("BOOKED", "CONFIRMED")
+    );
+
+    Long totalTables = tableRepository.count();
+
+    Long reservedOrOccupiedTables = tableRepository.countReservedOrOccupiedTablesForToday(today);
+
+    Long availableTables = totalTables - reservedOrOccupiedTables;
+
+    Long todayTotalBills = orderRepository.countByCreatedAtBetweenAndOrderStatusNotIn(
+            todayStart,
+            todayEnd,
+            List.of("CANCELLED")
+    );
+
+    Long todayPaidBills = orderRepository.countByCreatedAtBetweenAndOrderStatusIn(
+            todayStart,
+            todayEnd,
+            List.of("PAID")
+    );
+
+    Long todayUnpaidBills = orderRepository.countByCreatedAtBetweenAndOrderStatusIn(
+            todayStart,
+            todayEnd,
+            List.of("PLACED", "ACCEPTED", "PREPARING", "READY", "SERVED")
+    );
 
     Long totalCustomers = userRepository.countByRoleRoleName("CUSTOMER");
     Long totalMenuItems = menuItemRepository.count();
-    Long totalTables = tableRepository.count();
 
     return new DashboardSummaryResponse(
             todayRevenue,
@@ -165,21 +190,23 @@ public class DashboardService {
             totalRevenue,
 
             todayOrders,
-            thisMonthOrders,
-            totalOrders,
+            todayServedOrders,
+            todayUnservedOrders,
 
-            todayPendingOrders,
-            totalPendingOrders,
+            todayReservations,
+            todayServedReservations,
+            todayUnservedReservations,
 
-            todayPaidOrders,
-            totalPaidOrders,
+            totalTables,
+            reservedOrOccupiedTables,
+            availableTables,
 
-            todayPendingPayments,
-            totalPendingPayments,
+            todayTotalBills,
+            todayPaidBills,
+            todayUnpaidBills,
 
             totalCustomers,
-            totalMenuItems,
-            totalTables
+            totalMenuItems
     );
 }
 }

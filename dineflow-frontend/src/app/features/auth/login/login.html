@@ -1,62 +1,129 @@
-<div class="auth-page">
-  <div class="auth-card">
-    <h2>Welcome Back</h2>
-    <p class="subtitle">Login to continue to DineFlow</p>
+<div class="login-page">
+  <div class="login-container">
 
-    <div *ngIf="errorMessage" class="alert alert-danger">
-      {{ errorMessage }}
-    </div>
-
-    <div *ngIf="successMessage" class="alert alert-success">
-      {{ successMessage }}
-    </div>
-
-    <form [formGroup]="loginForm" (ngSubmit)="login()">
-
-      <div class="form-group">
-        <label>Email</label>
-        <input
-          type="email"
-          class="form-control"
-          formControlName="email"
-          placeholder="Enter email"
-        />
-
-        <small *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.invalid">
-          Valid email is required
-        </small>
+    <div class="brand-section">
+      <div class="brand-logo">
+        <i class="bi bi-cup-hot-fill"></i>
       </div>
 
-      <div class="form-group">
-        <label>Password</label>
+      <h1>DineFlow</h1>
+      <h3>Virtual Restaurant Management System</h3>
 
-        <div class="password-box">
-          <input
-            [type]="showPassword ? 'text' : 'password'"
-            class="form-control"
-            formControlName="password"
-            placeholder="Enter password"
-          />
+      <p>
+        Manage food orders, table bookings, payments, kitchen flow,
+        and restaurant operations in one simple platform.
+      </p>
 
-          <button type="button" class="eye-btn" (click)="togglePassword()">
-            <i [class]="showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
-          </button>
+      <div class="feature-list">
+        <div>
+          <i class="bi bi-check-circle-fill"></i>
+          Order food online
         </div>
 
-        <small *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid">
-          Password is required
-        </small>
+        <div>
+          <i class="bi bi-check-circle-fill"></i>
+          Reserve table / Pre-Booking
+        </div>
+
+        <div>
+          <i class="bi bi-check-circle-fill"></i>
+          Track Order status
+        </div>
+      </div>
+    </div>
+
+    <div class="login-card">
+      <div class="login-header">
+        <h2>Welcome</h2>
+        <p>Login to continue to your DineFlow account.</p>
       </div>
 
-      <button class="btn btn-primary w-100" type="submit" [disabled]="isLoading">
-        {{ isLoading ? 'Logging in...' : 'Login' }}
-      </button>
-    </form>
+      <div *ngIf="errorMessage" class="alert alert-danger">
+        {{ errorMessage }}
+      </div>
 
-    <div class="links">
-      <a routerLink="/forgot-password">Forgot Password?</a>
-      <span> | </span>
-      <a routerLink="/register">Create Customer Account</a>
+      <div *ngIf="successMessage" class="alert alert-success">
+        {{ successMessage }}
+      </div>
+
+      <form [formGroup]="loginForm" (ngSubmit)="login()">
+
+        <div class="form-group">
+          <label>Email Address</label>
+
+          <div class="input-box">
+            <i class="bi bi-envelope"></i>
+
+            <input
+              type="email"
+              class="form-control"
+              formControlName="email"
+              placeholder="Enter your email"
+            />
+          </div>
+
+          <small
+            class="text-danger"
+            *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.hasError('required')"
+          >
+            Email is required.
+          </small>
+
+          <small
+            class="text-danger"
+            *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.hasError('email')"
+          >
+            Enter a valid email address.
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label>Password</label>
+
+          <div class="input-box password-box">
+            <i class="bi bi-lock"></i>
+
+            <input
+              [type]="showPassword ? 'text' : 'password'"
+              class="form-control"
+              formControlName="password"
+              placeholder="Enter your password"
+            />
+
+            <button type="button" class="eye-btn" (click)="togglePassword()">
+              <i [class]="showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+            </button>
+          </div>
+
+          <small
+            class="text-danger"
+            *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.hasError('required')"
+          >
+            Password is required.
+          </small>
+        </div>
+
+        <div class="login-options">
+          <span></span>
+          <a routerLink="/forgot-password">Forgot Password?</a>
+        </div>
+
+        <button
+          class="login-btn"
+          type="submit"
+          [disabled]="loginForm.invalid || isLoading"
+        >
+          {{ isLoading ? 'Logging in...' : 'Login' }}
+        </button>
+      </form>
+
+      <div class="register-link">
+        <p>
+          New customer?
+          <a routerLink="/register">Create an account</a>
+        </p>
+      </div>
     </div>
+
   </div>
 </div>

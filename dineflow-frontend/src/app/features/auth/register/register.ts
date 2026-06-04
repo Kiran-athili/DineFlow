@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
@@ -25,10 +25,31 @@ export class Register {
     private router: Router
   ) {
     this.registerForm = this.fb.group({
-      fullName: ['', [Validators.required]],
-      email: ['', [Validators.required, Validators.email]],
-      phone: [''],
-      password: ['', [Validators.required, Validators.minLength(6)]]
+      fullName: ['', [Validators.required, Validators.minLength(3)]],
+
+      email: [
+        '',
+        [
+          Validators.required,
+          Validators.email
+        ]
+      ],
+
+      phone: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern(/^[6-9][0-9]{9}$/)
+        ]
+      ],
+
+      password: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(6)
+        ]
+      ]
     });
   }
 
@@ -65,7 +86,18 @@ export class Register {
       },
       error: (error) => {
         this.isLoading = false;
-        this.errorMessage = error.error?.message || 'Registration failed';
+
+        if (error.status === 0) {
+          this.errorMessage = 'Backend not reachable. Please check if backend is running.';
+          return;
+        }
+
+        if (error.error?.message) {
+          this.errorMessage = error.error.message;
+          return;
+        }
+
+        this.errorMessage = 'Registration failed. Please try again.';
       }
     });
   }

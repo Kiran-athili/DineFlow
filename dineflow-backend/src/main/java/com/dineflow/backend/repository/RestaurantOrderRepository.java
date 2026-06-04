@@ -41,4 +41,16 @@ public interface RestaurantOrderRepository extends JpaRepository<RestaurantOrder
     );
 
     List<RestaurantOrder> findByCustomer(User customer);
+
+    Long countByCreatedAtBetweenAndOrderStatusIn(
+        LocalDateTime fromDate,
+        LocalDateTime toDate,
+        List<String> statuses
+);
+
+Long countByCreatedAtBetweenAndOrderStatusNotIn(
+        LocalDateTime fromDate,
+        LocalDateTime toDate,
+        List<String> statuses
+);
 }

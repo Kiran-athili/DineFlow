@@ -2,6 +2,7 @@ package com.dineflow.backend.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
@@ -9,6 +10,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class DashboardSummaryResponse {
 
     private BigDecimal todayRevenue;
@@ -16,19 +18,21 @@ public class DashboardSummaryResponse {
     private BigDecimal totalRevenue;
 
     private Long todayOrders;
-    private Long thisMonthOrders;
-    private Long totalOrders;
+    private Long todayServedOrders;
+    private Long todayUnservedOrders;
 
-    private Long todayPendingOrders;
-    private Long totalPendingOrders;
+    private Long todayReservations;
+    private Long todayServedReservations;
+    private Long todayUnservedReservations;
 
-    private Long todayPaidOrders;
-    private Long totalPaidOrders;
+    private Long totalTables;
+    private Long reservedOrOccupiedTables;
+    private Long availableTables;
 
-    private Long todayPendingPayments;
-    private Long totalPendingPayments;
+    private Long todayTotalBills;
+    private Long todayPaidBills;
+    private Long todayUnpaidBills;
 
     private Long totalCustomers;
     private Long totalMenuItems;
-    private Long totalTables;
 }

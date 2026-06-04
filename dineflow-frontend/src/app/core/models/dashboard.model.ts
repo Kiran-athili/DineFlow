@@ -37,19 +37,21 @@ export interface DashboardSummaryResponse {
   totalRevenue: number;
 
   todayOrders: number;
-  thisMonthOrders: number;
-  totalOrders: number;
+  todayServedOrders: number;
+  todayUnservedOrders: number;
 
-  todayPendingOrders: number;
-  totalPendingOrders: number;
+  todayReservations: number;
+  todayServedReservations: number;
+  todayUnservedReservations: number;
 
-  todayPaidOrders: number;
-  totalPaidOrders: number;
+  totalTables: number;
+  reservedOrOccupiedTables: number;
+  availableTables: number;
 
-  todayPendingPayments: number;
-  totalPendingPayments: number;
+  todayTotalBills: number;
+  todayPaidBills: number;
+  todayUnpaidBills: number;
 
   totalCustomers: number;
   totalMenuItems: number;
-  totalTables: number;
 }

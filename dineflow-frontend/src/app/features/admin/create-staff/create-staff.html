@@ -31,8 +31,18 @@
             placeholder="Enter full name"
           />
 
-          <small *ngIf="staffForm.get('fullName')?.touched && staffForm.get('fullName')?.invalid">
-            Full name is required
+          <small
+            class="text-danger"
+            *ngIf="staffForm.get('fullName')?.touched && staffForm.get('fullName')?.hasError('required')"
+          >
+            Full name is required.
+          </small>
+
+          <small
+            class="text-danger"
+            *ngIf="staffForm.get('fullName')?.touched && staffForm.get('fullName')?.hasError('minlength')"
+          >
+            Full name must be at least 3 characters.
           </small>
         </div>
 
@@ -42,11 +52,21 @@
             type="email"
             class="form-control"
             formControlName="email"
-            placeholder="Enter email"
+            placeholder="Example: user@gmail.com"
           />
 
-          <small *ngIf="staffForm.get('email')?.touched && staffForm.get('email')?.invalid">
-            Valid email is required
+          <small
+            class="text-danger"
+            *ngIf="staffForm.get('email')?.touched && staffForm.get('email')?.hasError('required')"
+          >
+            Email is required.
+          </small>
+
+          <small
+            class="text-danger"
+            *ngIf="staffForm.get('email')?.touched && staffForm.get('email')?.hasError('email')"
+          >
+            Enter a valid email address. Example: user@gmail.com
           </small>
         </div>
       </div>
@@ -57,8 +77,23 @@
           <input
             class="form-control"
             formControlName="phone"
-            placeholder="Enter phone number"
+            placeholder="Enter 10-digit mobile number"
+            maxlength="10"
           />
+
+          <small
+            class="text-danger"
+            *ngIf="staffForm.get('phone')?.touched && staffForm.get('phone')?.hasError('required')"
+          >
+            Phone number is required.
+          </small>
+
+          <small
+            class="text-danger"
+            *ngIf="staffForm.get('phone')?.touched && staffForm.get('phone')?.hasError('pattern')"
+          >
+            Enter a valid 10-digit mobile number starting with 6, 7, 8, or 9.
+          </small>
         </div>
 
         <div class="col-md-6">
@@ -70,8 +105,11 @@
             </option>
           </select>
 
-          <small *ngIf="staffForm.get('roleName')?.touched && staffForm.get('roleName')?.invalid">
-            Role is required
+          <small
+            class="text-danger"
+            *ngIf="staffForm.get('roleName')?.touched && staffForm.get('roleName')?.hasError('required')"
+          >
+            Role is required.
           </small>
         </div>
       </div>
@@ -92,13 +130,27 @@
           </button>
         </div>
 
-        <small *ngIf="staffForm.get('password')?.touched && staffForm.get('password')?.invalid">
-          Password must be at least 6 characters
+        <small
+          class="text-danger"
+          *ngIf="staffForm.get('password')?.touched && staffForm.get('password')?.hasError('required')"
+        >
+          Password is required.
+        </small>
+
+        <small
+          class="text-danger"
+          *ngIf="staffForm.get('password')?.touched && staffForm.get('password')?.hasError('minlength')"
+        >
+          Password must be at least 6 characters.
         </small>
       </div>
 
       <div class="actions">
-        <button class="btn btn-primary" type="submit" [disabled]="isLoading">
+        <button
+          class="btn btn-primary"
+          type="submit"
+          [disabled]="staffForm.invalid || isLoading"
+        >
           {{ isLoading ? 'Creating...' : 'Create Staff' }}
         </button>
 
@@ -168,7 +220,7 @@
 
             <td>
               <span class="badge" [ngClass]="getStaffStatusClass(user.staffStatus)">
-                {{ user.staffStatus }}
+                {{ user.staffStatus || 'INACTIVE' }}
               </span>
             </td>
 

@@ -21,7 +21,6 @@ export class CreateStaff implements OnInit {
 
   staffUsers: StaffResponse[] = [];
   filteredStaffUsers: StaffResponse[] = [];
-  staffStatuses = ['ACTIVE', 'ON_LEAVE', 'INACTIVE', 'EXITED'];
 
   selectedRole = 'ALL';
 
@@ -43,11 +42,33 @@ export class CreateStaff implements OnInit {
     private authService: AuthService
   ) {
     this.staffForm = this.fb.group({
-      fullName: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      phone: [''],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-      roleName: ['', Validators.required]
+      fullName: ['', [Validators.required, Validators.minLength(3)]],
+
+      email: [
+        '',
+        [
+          Validators.required,
+          Validators.email
+        ]
+      ],
+
+      phone: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern(/^[6-9][0-9]{9}$/)
+        ]
+      ],
+
+      roleName: ['', Validators.required],
+
+      password: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(6)
+        ]
+      ]
     });
   }
 
@@ -119,17 +140,22 @@ export class CreateStaff implements OnInit {
     });
   }
 
-updateStaffStatus(user: StaffResponse, status: string): void {
-  this.authService.updateStaffStatus(user.userId, status).subscribe({
-    next: () => {
-      this.showSuccess('Staff status updated successfully');
-      this.loadStaff();
-    },
-    error: (error) => {
-      this.showError(error.error?.message || 'Failed to update staff status');
+  updateStaffStatus(user: StaffResponse, status: string): void {
+    if (user.staffStatus === status) {
+      return;
     }
-  });
-}
+
+    this.authService.updateStaffStatus(user.userId, status).subscribe({
+      next: () => {
+        this.showSuccess('Staff status updated successfully');
+        this.loadStaff();
+      },
+      error: (error) => {
+        this.showError(error.error?.message || 'Failed to update staff status');
+      }
+    });
+  }
+
   resetForm(): void {
     this.staffForm.reset({
       fullName: '',
@@ -142,8 +168,20 @@ updateStaffStatus(user: StaffResponse, status: string): void {
     this.showPassword = false;
   }
 
-  getStatusClass(isActive: boolean): string {
-    return isActive ? 'bg-success' : 'bg-danger';
+  getStaffStatusClass(status?: string): string {
+    if (status === 'ACTIVE') {
+      return 'bg-success';
+    }
+
+    if (status === 'ON_LEAVE') {
+      return 'bg-warning text-dark';
+    }
+
+    if (status === 'EXITED') {
+      return 'bg-dark';
+    }
+
+    return 'bg-danger';
   }
 
   private showSuccess(message: string): void {
@@ -164,20 +202,4 @@ updateStaffStatus(user: StaffResponse, status: string): void {
       this.errorMessage = '';
     }, 3000);
   }
-  getStaffStatusClass(status: string): string {
-  if (status === 'ACTIVE') {
-    return 'bg-success';
-  }
-
-  if (status === 'ON_LEAVE') {
-    return 'bg-warning';
-  }
-
-  if (status === 'EXITED') {
-    return 'bg-dark';
-  }
-
-  return 'bg-danger';
-}
-
 }

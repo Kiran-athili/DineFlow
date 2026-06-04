@@ -1,7 +1,9 @@
 <div class="auth-page">
   <div class="auth-card">
-    <h2>Create Account</h2>
-    <p class="subtitle">Register as a customer</p>
+    <div class="auth-header">
+      <h2>Create Account</h2>
+      <p>Register as a customer to order food and book tables.</p>
+    </div>
 
     <div *ngIf="errorMessage" class="alert alert-danger">
       {{ errorMessage }}
@@ -12,18 +14,26 @@
     </div>
 
     <form [formGroup]="registerForm" (ngSubmit)="register()">
-
       <div class="form-group">
         <label>Full Name</label>
         <input
-          type="text"
           class="form-control"
           formControlName="fullName"
           placeholder="Enter full name"
         />
 
-        <small *ngIf="registerForm.get('fullName')?.touched && registerForm.get('fullName')?.invalid">
-          Full name is required
+        <small
+          class="text-danger"
+          *ngIf="registerForm.get('fullName')?.touched && registerForm.get('fullName')?.hasError('required')"
+        >
+          Full name is required.
+        </small>
+
+        <small
+          class="text-danger"
+          *ngIf="registerForm.get('fullName')?.touched && registerForm.get('fullName')?.hasError('minlength')"
+        >
+          Full name must be at least 3 characters.
         </small>
       </div>
 
@@ -33,22 +43,46 @@
           type="email"
           class="form-control"
           formControlName="email"
-          placeholder="Enter email"
+          placeholder="Example: user@gmail.com"
         />
 
-        <small *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.invalid">
-          Valid email is required
+        <small
+          class="text-danger"
+          *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.hasError('required')"
+        >
+          Email is required.
+        </small>
+
+        <small
+          class="text-danger"
+          *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.hasError('email')"
+        >
+          Enter a valid email address. Example: user@gmail.com
         </small>
       </div>
 
       <div class="form-group">
         <label>Phone</label>
         <input
-          type="text"
           class="form-control"
           formControlName="phone"
-          placeholder="Enter phone number"
+          placeholder="Enter 10-digit mobile number"
+          maxlength="10"
         />
+
+        <small
+          class="text-danger"
+          *ngIf="registerForm.get('phone')?.touched && registerForm.get('phone')?.hasError('required')"
+        >
+          Phone number is required.
+        </small>
+
+        <small
+          class="text-danger"
+          *ngIf="registerForm.get('phone')?.touched && registerForm.get('phone')?.hasError('pattern')"
+        >
+          Enter a valid 10-digit mobile number starting with 6, 7, 8, or 9.
+        </small>
       </div>
 
       <div class="form-group">
@@ -67,19 +101,35 @@
           </button>
         </div>
 
-        <small *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.invalid">
-          Password must be at least 6 characters
+        <small
+          class="text-danger"
+          *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.hasError('required')"
+        >
+          Password is required.
+        </small>
+
+        <small
+          class="text-danger"
+          *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.hasError('minlength')"
+        >
+          Password must be at least 6 characters.
         </small>
       </div>
 
-      <button class="btn btn-primary w-100" type="submit" [disabled]="isLoading">
-        {{ isLoading ? 'Creating Account...' : 'Register' }}
+      <button
+        class="btn btn-primary w-100"
+        type="submit"
+        [disabled]="registerForm.invalid || isLoading"
+      >
+        {{ isLoading ? 'Registering...' : 'Register' }}
       </button>
     </form>
 
-    <div class="links">
-      Already have an account?
-      <a routerLink="/login">Login</a>
+    <div class="auth-footer">
+      <p>
+        Already have an account?
+        <a routerLink="/login">Login</a>
+      </p>
     </div>
   </div>
 </div>

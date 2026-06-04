@@ -1,9 +1,6 @@
 # DineFlow - Virtual Restaurant Management System
 
-DineFlow is a full-stack virtual restaurant management platform built with **Spring Boot, Angular, MySQL, JWT authentication, and role-based access control**.
-
-It allows customers to browse menu items, place food orders, make mock payments, reserve tables, and preorder food. Admin users can manage restaurant operations such as menu items, tables, staff, orders, payments, reservations, and dashboard analytics. Kitchen staff can manage food preparation statuses.
-
+DineFlow is a full-stack virtual restaurant management platform built with **Spring Boot, Angular, MySQL, JWT authentication, and role-based access control**.It is designed for restaurants to manage orders, tables, payments, staff, kitchen workflow, and reservations. It also provides customers with an easy way to order food, track order status, make payments, and book tables online.
 ---
 
 ## Live Website

@@ -22,4 +22,9 @@ public interface TableReservationRepository extends JpaRepository<TableReservati
             LocalTime reservationTime,
             List<String> reservationStatuses
     );
+
+    Long countByReservationDateAndReservationStatusIn(
+        LocalDate reservationDate,
+        List<String> statuses
+);
 }
