@@ -842,3 +842,17 @@ Possible improvements:
 DineFlow is a complete role-based virtual restaurant management system built using **Spring Boot, Angular, MySQL, and JWT Authentication**.
 
 It supports restaurant ordering, mock payments, kitchen order handling, staff management, table reservations, food preordering, and admin analytics in one full-stack application.
+
+## live project is running from:
+
+Frontend  → Netlify
+Backend   → Render
+Database  → Aiven MySQL
+
+## when sharing this live website link:
+https://dineflow-platform.netlify.app
+
+it will work as long as:
+-> Netlify site is Published
+-> Render backend is Deploy live
+-> Aiven MySQL is Running
