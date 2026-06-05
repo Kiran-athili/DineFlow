@@ -845,8 +845,8 @@ It supports restaurant ordering, mock payments, kitchen order handling, staff ma
 
 ## live project is running from:
 
-Frontend  → Netlify
-Backend   → Render
+Frontend  → Netlify,
+Backend   → Render,
 Database  → Aiven MySQL
 
 ## when sharing this live website link:
