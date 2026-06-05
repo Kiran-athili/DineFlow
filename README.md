@@ -8,14 +8,9 @@ It is designed for restaurants to manage orders, tables, payments, staff, kitche
 
 ## Live Demo
 
-🌐 **DineFlow Website:**  
-https://dineflow-platform.netlify.app/login
-
-⚙️ **Backend API:**  
-https://dineflow-backend-zb9l.onrender.com
+🌐 **Live Demo:** [DineFlow Website](https://dineflow-platform.netlify.app/login)
 
 > Note: The backend is hosted on Render free tier, so the first request may take a few seconds if the server is inactive.
-
 ---
 
 ## Project Screenshots
