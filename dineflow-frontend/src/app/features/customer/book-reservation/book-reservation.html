@@ -26,22 +26,16 @@
         <form [formGroup]="reservationForm" (ngSubmit)="bookReservation()">
           <div class="row">
             <div class="col-md-6">
-              <label>Select Table</label>
-              <select class="form-control" formControlName="tableId">
-                <option value="">Select table</option>
-                <option *ngFor="let table of tables" [value]="table.tableId">
-                  {{ table.tableNumber }} - Capacity {{ table.capacity }}
-                </option>
-              </select>
-            </div>
-
-            <div class="col-md-6">
               <label>Guest Count</label>
-              <input type="number" class="form-control" formControlName="guestCount" />
+              <input
+                type="number"
+                class="form-control"
+                formControlName="guestCount"
+                min="1"
+                (change)="loadAvailableTablesForReservation()"
+              />
             </div>
-          </div>
 
-          <div class="row mt-3">
             <div class="col-md-6">
               <label>Reservation Date</label>
               <input
@@ -49,12 +43,40 @@
                 class="form-control"
                 formControlName="reservationDate"
                 [min]="minDate"
+                (change)="loadAvailableTablesForReservation()"
+              />
+            </div>
+          </div>
+
+          <div class="row mt-3">
+            <div class="col-md-6">
+              <label>Reservation Time</label>
+              <input
+                type="time"
+                class="form-control"
+                formControlName="reservationTime"
+                (change)="loadAvailableTablesForReservation()"
               />
             </div>
 
             <div class="col-md-6">
-              <label>Reservation Time</label>
-              <input type="time" class="form-control" formControlName="reservationTime" />
+              <label>Select Table</label>
+
+              <select class="form-control" formControlName="tableId">
+                <option value="">Select available table</option>
+
+                <option *ngFor="let table of tables" [value]="table.tableId">
+                  {{ table.tableNumber }} - Capacity {{ table.capacity }}
+                </option>
+              </select>
+
+              <small *ngIf="isLoadingTables">
+                Loading available tables...
+              </small>
+
+              <small *ngIf="!isLoadingTables && tableMessage">
+                {{ tableMessage }}
+              </small>
             </div>
           </div>
 

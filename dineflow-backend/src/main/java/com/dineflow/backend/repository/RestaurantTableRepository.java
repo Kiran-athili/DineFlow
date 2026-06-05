@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 public interface RestaurantTableRepository extends JpaRepository<RestaurantTable, Integer> {
@@ -26,4 +27,23 @@ public interface RestaurantTableRepository extends JpaRepository<RestaurantTable
            OR r.reservation_id IS NOT NULL
         """, nativeQuery = true)
 Long countReservedOrOccupiedTablesForToday(@Param("today") LocalDate today);
+
+@Query(value = """
+        SELECT t.*
+        FROM restaurant_tables t
+        WHERE t.capacity >= :guestCount
+          AND t.table_id NOT IN (
+              SELECT r.table_id
+              FROM table_reservations r
+              WHERE r.reservation_date = :reservationDate
+                AND r.reservation_time = :reservationTime
+                AND r.reservation_status IN ('BOOKED', 'CONFIRMED')
+          )
+        ORDER BY t.table_number
+        """, nativeQuery = true)
+List<RestaurantTable> findAvailableTablesForReservation(
+        @Param("reservationDate") LocalDate reservationDate,
+        @Param("reservationTime") LocalTime reservationTime,
+        @Param("guestCount") Integer guestCount
+);
 }

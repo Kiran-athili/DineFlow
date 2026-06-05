@@ -1,11 +1,14 @@
 package com.dineflow.backend.service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.dineflow.backend.dto.AvailableTableResponse;
 import com.dineflow.backend.dto.CreateReservationRequest;
 import com.dineflow.backend.dto.ReservationItemRequest;
 import com.dineflow.backend.dto.ReservationItemResponse;
@@ -179,4 +182,21 @@ public class ReservationService {
                 itemResponses
         );
     }
+
+    public List<AvailableTableResponse> getAvailableTablesForReservation(
+        LocalDate reservationDate,
+        LocalTime reservationTime,
+        Integer guestCount
+) {
+    return tableRepository.findAvailableTablesForReservation(
+            reservationDate,
+            reservationTime,
+            guestCount
+    ).stream().map(table -> new AvailableTableResponse(
+            table.getTableId(),
+            table.getTableNumber(),
+            table.getCapacity(),
+            table.getStatus()
+    )).toList();
+}
 }

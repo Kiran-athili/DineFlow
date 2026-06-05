@@ -6,7 +6,6 @@ import { MenuItem } from '../../../core/models/menu.model';
 import { RestaurantTable } from '../../../core/models/table.model';
 import { MenuService } from '../../../core/services/menu.service';
 import { ReservationService } from '../../../core/services/reservation.service';
-import { TableService } from '../../../core/services/table.service';
 import { environment } from '../../../../environments/environment';
 
 interface ReservationCartItem {
@@ -31,9 +30,11 @@ export class BookReservation implements OnInit {
 
   isLoading = false;
   isBooking = false;
+  isLoadingTables = false;
 
   errorMessage = '';
   successMessage = '';
+  tableMessage = 'Please select reservation date, time, and guest count to view available tables.';
 
   minDate = new Date().toISOString().slice(0, 10);
 
@@ -41,7 +42,6 @@ export class BookReservation implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private tableService: TableService,
     private menuService: MenuService,
     private reservationService: ReservationService,
     private router: Router
@@ -55,21 +55,50 @@ export class BookReservation implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadData();
-  }
-
-  loadData(): void {
-    this.loadTables();
     this.loadMenuItems();
   }
 
-  loadTables(): void {
-    this.tableService.getAvailableTables().subscribe({
+  loadData(): void {
+    this.loadAvailableTablesForReservation();
+    this.loadMenuItems();
+  }
+
+  loadAvailableTablesForReservation(): void {
+    const reservationDate = this.reservationForm.value.reservationDate ?? '';
+    let reservationTime = this.reservationForm.value.reservationTime ?? '';
+    const guestCount = Number(this.reservationForm.value.guestCount);
+
+    this.tables = [];
+    this.reservationForm.patchValue({ tableId: '' }, { emitEvent: false });
+
+    if (!reservationDate || !reservationTime || !guestCount || guestCount <= 0) {
+      this.tableMessage = 'Please select reservation date, time, and guest count to view available tables.';
+      return;
+    }
+
+    if (reservationTime.length === 5) {
+      reservationTime = `${reservationTime}:00`;
+    }
+
+    this.isLoadingTables = true;
+    this.tableMessage = '';
+
+    this.reservationService.getAvailableTablesForReservation(
+      reservationDate,
+      reservationTime,
+      guestCount
+    ).subscribe({
       next: (response) => {
         this.tables = response;
+        this.isLoadingTables = false;
+
+        if (this.tables.length === 0) {
+          this.tableMessage = 'No tables available for the selected date and time.';
+        }
       },
       error: (error) => {
-        this.showError(error.error?.message || 'Failed to load tables');
+        this.isLoadingTables = false;
+        this.tableMessage = error.error?.message || 'Failed to load available tables.';
       }
     });
   }
@@ -94,15 +123,16 @@ export class BookReservation implements OnInit {
 
     if (existing) {
       existing.quantity += 1;
-    } else {
-      this.cartItems.push({
-  itemId: item.itemId,
-  itemName: item.itemName,
-  price: item.price,
-  quantity: 1,
-  imageUrl: item.imageUrl
-});
+      return;
     }
+
+    this.cartItems.push({
+      itemId: item.itemId,
+      itemName: item.itemName,
+      price: item.price,
+      quantity: 1,
+      imageUrl: item.imageUrl
+    });
   }
 
   increaseQuantity(item: ReservationCartItem): void {
@@ -174,6 +204,19 @@ export class BookReservation implements OnInit {
     });
   }
 
+  getFileUrl(fileUrl?: string): string {
+    if (!fileUrl) {
+      return '';
+    }
+
+    if (fileUrl.startsWith('http')) {
+      return fileUrl;
+    }
+
+    const serverUrl = environment.apiBaseUrl.replace('/api', '');
+    return `${serverUrl}${fileUrl}`;
+  }
+
   private showSuccess(message: string): void {
     this.successMessage = message;
     this.errorMessage = '';
@@ -192,16 +235,4 @@ export class BookReservation implements OnInit {
       this.errorMessage = '';
     }, 3000);
   }
-  getFileUrl(fileUrl?: string): string {
-  if (!fileUrl) {
-    return '';
-  }
-
-  if (fileUrl.startsWith('http')) {
-    return fileUrl;
-  }
-
-  const serverUrl = environment.apiBaseUrl.replace('/api', '');
-  return `${serverUrl}${fileUrl}`;
-}
 }

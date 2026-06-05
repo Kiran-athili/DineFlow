@@ -44,4 +44,21 @@ export class ReservationService {
       request
     );
   }
+
+  getAvailableTablesForReservation(
+  reservationDate: string,
+  reservationTime: string,
+  guestCount: number
+) {
+  return this.http.get<any[]>(
+    `${environment.apiBaseUrl}/reservations/available-tables`,
+    {
+      params: {
+        reservationDate,
+        reservationTime,
+        guestCount
+      }
+    }
+  );
+}
 }

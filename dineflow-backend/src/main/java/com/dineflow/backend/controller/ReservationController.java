@@ -1,5 +1,6 @@
 package com.dineflow.backend.controller;
 
+import com.dineflow.backend.dto.AvailableTableResponse;
 import com.dineflow.backend.dto.CreateReservationRequest;
 import com.dineflow.backend.dto.ReservationResponse;
 import com.dineflow.backend.dto.UpdateReservationStatusRequest;
@@ -8,11 +9,13 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @RestController
@@ -75,4 +78,19 @@ public class ReservationController {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied");
         }
     }
+
+    @GetMapping("/available-tables")
+public ResponseEntity<List<AvailableTableResponse>> getAvailableTablesForReservation(
+        @RequestParam LocalDate reservationDate,
+        @RequestParam LocalTime reservationTime,
+        @RequestParam Integer guestCount
+) {
+    return ResponseEntity.ok(
+            reservationService.getAvailableTablesForReservation(
+                    reservationDate,
+                    reservationTime,
+                    guestCount
+            )
+    );
+}
 }
