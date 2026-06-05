@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiBaseUrl: 'http://localhost:8080/api'
+  apiBaseUrl: 'https://dineflow-backend-zb9l.onrender.com/api'
 };
