@@ -4,9 +4,8 @@ import com.dineflow.backend.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import java.util.Optional;
-
 import java.util.List;
+import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Integer> {
 
@@ -18,6 +17,8 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     List<User> findByRoleRoleNameIn(List<String> roleNames);
 
+    List<User> findByRoleRoleNameInOrderByCreatedAtDesc(List<String> roleNames);
+
     @Query(value = """
         SELECT DATE(u.created_at) AS label, COUNT(*) AS value
         FROM users u
@@ -27,9 +28,9 @@ public interface UserRepository extends JpaRepository<User, Integer> {
         GROUP BY DATE(u.created_at)
         ORDER BY DATE(u.created_at)
         """, nativeQuery = true)
-List<Object[]> getDailyCustomersLast7Days();
+    List<Object[]> getDailyCustomersLast7Days();
 
-@Query(value = """
+    @Query(value = """
         SELECT DATE_FORMAT(u.created_at, '%Y-%m') AS label, COUNT(*) AS value
         FROM users u
         JOIN roles r ON u.role_id = r.role_id
@@ -38,9 +39,9 @@ List<Object[]> getDailyCustomersLast7Days();
         GROUP BY DATE_FORMAT(u.created_at, '%Y-%m')
         ORDER BY MIN(u.created_at)
         """, nativeQuery = true)
-List<Object[]> getMonthlyCustomersLast12Months();
+    List<Object[]> getMonthlyCustomersLast12Months();
 
-@Query(value = """
+    @Query(value = """
         SELECT YEAR(u.created_at) AS label, COUNT(*) AS value
         FROM users u
         JOIN roles r ON u.role_id = r.role_id
@@ -48,5 +49,5 @@ List<Object[]> getMonthlyCustomersLast12Months();
         GROUP BY YEAR(u.created_at)
         ORDER BY YEAR(u.created_at)
         """, nativeQuery = true)
-List<Object[]> getYearlyCustomers();
+    List<Object[]> getYearlyCustomers();
 }

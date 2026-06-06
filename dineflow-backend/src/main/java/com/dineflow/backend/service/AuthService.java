@@ -135,7 +135,7 @@ public AuthResponse createStaff(CreateStaffRequest request, String adminEmail) {
 }
 public List<StaffResponse> getAllStaff() {
 
-    List<User> staffUsers = userRepository.findByRoleRoleNameIn(
+    List<User> staffUsers = userRepository.findByRoleRoleNameInOrderByCreatedAtDesc(
             List.of("ADMIN", "KITCHEN")
     );
 

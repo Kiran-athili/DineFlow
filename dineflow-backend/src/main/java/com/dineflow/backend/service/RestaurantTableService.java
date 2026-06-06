@@ -33,11 +33,11 @@ public class RestaurantTableService {
     }
 
     public List<RestaurantTable> getAllTables() {
-        return restaurantTableRepository.findAll();
+        return restaurantTableRepository.findAllByOrderByCreatedAtDesc();
     }
 
     public List<RestaurantTable> getAvailableTables() {
-        return restaurantTableRepository.findByStatus("AVAILABLE");
+        return restaurantTableRepository.findByStatusOrderByCreatedAtDesc("AVAILABLE");
     }
 
     public RestaurantTable updateTable(Integer tableId, RestaurantTableRequest request) {
