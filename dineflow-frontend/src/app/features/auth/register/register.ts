@@ -1,6 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  ReactiveFormsModule,
+  ValidationErrors,
+  Validators
+} from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 
@@ -13,6 +19,8 @@ import { AuthService } from '../../../core/services/auth.service';
 export class Register {
 
   showPassword = false;
+  showConfirmPassword = false;
+
   errorMessage = '';
   successMessage = '';
   isLoading = false;
@@ -24,37 +32,64 @@ export class Register {
     private authService: AuthService,
     private router: Router
   ) {
-    this.registerForm = this.fb.group({
-      fullName: ['', [Validators.required, Validators.minLength(3)]],
+    this.registerForm = this.fb.group(
+      {
+        fullName: ['', [Validators.required, Validators.minLength(3)]],
 
-      email: [
-        '',
-        [
-          Validators.required,
-          Validators.email
-        ]
-      ],
+        email: [
+          '',
+          [
+            Validators.required,
+            Validators.email
+          ]
+        ],
 
-      phone: [
-        '',
-        [
-          Validators.required,
-          Validators.pattern(/^[6-9][0-9]{9}$/)
-        ]
-      ],
+        phone: [
+          '',
+          [
+            Validators.required,
+            Validators.pattern(/^[6-9][0-9]{9}$/)
+          ]
+        ],
 
-      password: [
-        '',
-        [
-          Validators.required,
-          Validators.minLength(6)
+        password: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(6)
+          ]
+        ],
+
+        confirmPassword: [
+          '',
+          [
+            Validators.required
+          ]
         ]
-      ]
-    });
+      },
+      {
+        validators: this.passwordMatchValidator
+      }
+    );
+  }
+
+  passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
+    const password = control.get('password')?.value;
+    const confirmPassword = control.get('confirmPassword')?.value;
+
+    if (!password || !confirmPassword) {
+      return null;
+    }
+
+    return password === confirmPassword ? null : { passwordMismatch: true };
   }
 
   togglePassword(): void {
     this.showPassword = !this.showPassword;
+  }
+
+  toggleConfirmPassword(): void {
+    this.showConfirmPassword = !this.showConfirmPassword;
   }
 
   register(): void {
