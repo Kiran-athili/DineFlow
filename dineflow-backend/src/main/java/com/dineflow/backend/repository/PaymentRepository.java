@@ -17,6 +17,8 @@ public interface PaymentRepository extends JpaRepository<Payment, Integer> {
 
     Optional<Payment> findByOrder(RestaurantOrder order);
 
+    List<Payment> findAllByOrderByPaidAtDesc();
+
     List<Payment> findByPaidAtBetweenOrderByPaidAtDesc(
             LocalDateTime fromDate,
             LocalDateTime toDate

@@ -28,14 +28,17 @@
     </div>
 
     <div *ngIf="!isLoading && orders.length > 0" class="order-list">
-      <div class="order-card" *ngFor="let order of orders">
+      <div class="order-card" *ngFor="let order of orders; let i = index">
 
         <div class="order-header">
           <div>
-            <h5>Order #{{ order.orderId }}</h5>
+            <h5>Order #{{ i + 1 }}</h5>
+            <small>Order ID: {{ order.orderId }}</small>
+
             <p>
               Table: <strong>{{ order.tableNumber }}</strong>
             </p>
+
             <small>{{ order.createdAt | date:'medium' }}</small>
           </div>
 

@@ -23,10 +23,11 @@
   </div>
 
   <div class="reservation-list" *ngIf="!isLoading && reservations.length > 0">
-    <div class="reservation-card" *ngFor="let reservation of reservations">
+    <div class="reservation-card" *ngFor="let reservation of reservations; let i = index">
       <div class="reservation-top">
         <div>
-          <h4>Reservation #{{ reservation.reservationId }}</h4>
+          <h4>Reservation #{{ i + 1 }}</h4>
+          <small>Booking ID: {{ reservation.reservationId }}</small>
           <p>
             Table {{ reservation.tableNumber }} |
             {{ reservation.guestCount }} Guest(s)
