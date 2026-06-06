@@ -10,4 +10,8 @@ public interface MenuCategoryRepository extends JpaRepository<MenuCategory, Inte
     boolean existsByCategoryName(String categoryName);
 
     List<MenuCategory> findByIsActiveTrue();
+
+    List<MenuCategory> findAllByOrderByCategoryIdDesc();
+
+    List<MenuCategory> findByIsActiveTrueOrderByCategoryIdDesc();
 }

@@ -36,15 +36,15 @@ public class MenuItemService {
     }
 
     public List<MenuItem> getAllItems() {
-        return menuItemRepository.findAll();
+        return menuItemRepository.findAllByOrderByItemIdDesc();
     }
 
     public List<MenuItem> getAvailableItems() {
-        return menuItemRepository.findByIsAvailableTrue();
+        return menuItemRepository.findByIsAvailableTrueOrderByItemIdDesc();
     }
 
     public List<MenuItem> getAvailableItemsByCategory(Integer categoryId) {
-        return menuItemRepository.findByCategoryCategoryIdAndIsAvailableTrue(categoryId);
+        return menuItemRepository.findByCategoryCategoryIdAndIsAvailableTrueOrderByItemIdDesc(categoryId);
     }
 
     public MenuItem updateItem(Integer itemId, MenuItemRequest request) {

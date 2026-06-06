@@ -31,11 +31,11 @@ public class MenuCategoryService {
     }
 
     public List<MenuCategory> getAllCategories() {
-        return menuCategoryRepository.findAll();
+        return menuCategoryRepository.findAllByOrderByCategoryIdDesc();
     }
 
     public List<MenuCategory> getActiveCategories() {
-        return menuCategoryRepository.findByIsActiveTrue();
+        return menuCategoryRepository.findByIsActiveTrueOrderByCategoryIdDesc();
     }
 
     public MenuCategory updateCategory(Integer categoryId, MenuCategoryRequest request) {
@@ -61,18 +61,18 @@ public class MenuCategoryService {
         return "Category deactivated successfully";
     }
 
-   public String updateCategoryStatus(Integer categoryId, Boolean active) {
+    public String updateCategoryStatus(Integer categoryId, Boolean active) {
 
-    MenuCategory category = menuCategoryRepository.findById(categoryId)
-            .orElseThrow(() -> new RuntimeException("Category not found"));
+        MenuCategory category = menuCategoryRepository.findById(categoryId)
+                .orElseThrow(() -> new RuntimeException("Category not found"));
 
-    category.setIsActive(active);
-    menuCategoryRepository.save(category);
+        category.setIsActive(active);
+        menuCategoryRepository.save(category);
 
-    if (Boolean.TRUE.equals(active)) {
-        return "Category activated successfully";
+        if (Boolean.TRUE.equals(active)) {
+            return "Category activated successfully";
+        }
+
+        return "Category deactivated successfully";
     }
-
-    return "Category deactivated successfully";
-}
 }

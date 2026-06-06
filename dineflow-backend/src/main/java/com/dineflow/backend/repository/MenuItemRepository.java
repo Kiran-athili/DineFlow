@@ -10,4 +10,10 @@ public interface MenuItemRepository extends JpaRepository<MenuItem, Integer> {
     List<MenuItem> findByIsAvailableTrue();
 
     List<MenuItem> findByCategoryCategoryIdAndIsAvailableTrue(Integer categoryId);
+
+    List<MenuItem> findAllByOrderByItemIdDesc();
+
+    List<MenuItem> findByIsAvailableTrueOrderByItemIdDesc();
+
+    List<MenuItem> findByCategoryCategoryIdAndIsAvailableTrueOrderByItemIdDesc(Integer categoryId);
 }
