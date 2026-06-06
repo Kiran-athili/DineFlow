@@ -7,9 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -38,7 +38,7 @@ public class OrderService {
                 .table(table)
                 .orderStatus("PLACED")
                 .totalAmount(BigDecimal.ZERO)
-                .createdAt(java.time.LocalDateTime.now())
+                .createdAt(LocalDateTime.now())
                 .build();
 
         RestaurantOrder savedOrder = orderRepository.save(order);
@@ -83,7 +83,7 @@ public class OrderService {
         User customer = userRepository.findByEmail(customerEmail)
                 .orElseThrow(() -> new RuntimeException("Customer not found"));
 
-        return orderRepository.findByCustomer(customer)
+        return orderRepository.findByCustomerOrderByCreatedAtDesc(customer)
                 .stream()
                 .map(this::mapToOrderResponse)
                 .toList();
@@ -91,7 +91,7 @@ public class OrderService {
 
     public List<OrderResponse> getAllOrders() {
 
-        return orderRepository.findAll()
+        return orderRepository.findAllByOrderByCreatedAtDesc()
                 .stream()
                 .map(this::mapToOrderResponse)
                 .toList();
@@ -99,7 +99,7 @@ public class OrderService {
 
     public List<OrderResponse> getOrdersByStatus(String status) {
 
-        return orderRepository.findByOrderStatus(status)
+        return orderRepository.findByOrderStatusOrderByCreatedAtDesc(status)
                 .stream()
                 .map(this::mapToOrderResponse)
                 .toList();
@@ -121,6 +121,59 @@ public class OrderService {
         RestaurantOrder updatedOrder = orderRepository.save(order);
 
         return mapToOrderResponse(updatedOrder);
+    }
+
+    public List<OrderResponse> getOrdersByDateRange(LocalDate fromDate, LocalDate toDate) {
+
+        LocalDateTime startDateTime = fromDate.atStartOfDay();
+        LocalDateTime endDateTime = toDate.atTime(23, 59, 59);
+
+        return orderRepository
+                .findByCreatedAtBetweenOrderByCreatedAtDesc(startDateTime, endDateTime)
+                .stream()
+                .map(this::mapToOrderResponse)
+                .toList();
+    }
+
+    public List<OrderResponse> getTodayOrders() {
+
+        LocalDate today = LocalDate.now();
+
+        LocalDateTime startDateTime = today.atStartOfDay();
+        LocalDateTime endDateTime = today.atTime(23, 59, 59);
+
+        return orderRepository
+                .findByCreatedAtBetweenOrderByCreatedAtDesc(startDateTime, endDateTime)
+                .stream()
+                .map(this::mapToOrderResponse)
+                .toList();
+    }
+
+    public List<OrderResponse> getPendingPayments() {
+
+        return orderRepository
+                .findByOrderStatusNotInOrderByCreatedAtDesc(List.of("PAID", "CANCELLED"))
+                .stream()
+                .map(this::mapToOrderResponse)
+                .toList();
+    }
+
+    public List<OrderResponse> getTodayPendingPayments() {
+
+        LocalDate today = LocalDate.now();
+
+        LocalDateTime startDateTime = today.atStartOfDay();
+        LocalDateTime endDateTime = today.atTime(23, 59, 59);
+
+        return orderRepository
+                .findByOrderStatusNotInAndCreatedAtBetweenOrderByCreatedAtDesc(
+                        List.of("PAID", "CANCELLED"),
+                        startDateTime,
+                        endDateTime
+                )
+                .stream()
+                .map(this::mapToOrderResponse)
+                .toList();
     }
 
     private OrderResponse mapToOrderResponse(RestaurantOrder order) {
@@ -148,55 +201,4 @@ public class OrderService {
                 itemResponses
         );
     }
-    public List<OrderResponse> getOrdersByDateRange(LocalDate fromDate, LocalDate toDate) {
-
-    LocalDateTime startDateTime = fromDate.atStartOfDay();
-    LocalDateTime endDateTime = toDate.atTime(23, 59, 59);
-
-    return orderRepository
-            .findByCreatedAtBetweenOrderByCreatedAtDesc(startDateTime, endDateTime)
-            .stream()
-            .map(this::mapToOrderResponse)
-            .toList();
-}
-public List<OrderResponse> getTodayOrders() {
-
-    LocalDate today = LocalDate.now();
-
-    LocalDateTime startDateTime = today.atStartOfDay();
-    LocalDateTime endDateTime = today.atTime(23, 59, 59);
-
-    return orderRepository
-            .findByCreatedAtBetweenOrderByCreatedAtDesc(startDateTime, endDateTime)
-            .stream()
-            .map(this::mapToOrderResponse)
-            .toList();
-}
-
-public List<OrderResponse> getPendingPayments() {
-
-    return orderRepository
-            .findByOrderStatusNotInOrderByCreatedAtDesc(List.of("PAID", "CANCELLED"))
-            .stream()
-            .map(this::mapToOrderResponse)
-            .toList();
-}
-
-public List<OrderResponse> getTodayPendingPayments() {
-
-    LocalDate today = LocalDate.now();
-
-    LocalDateTime startDateTime = today.atStartOfDay();
-    LocalDateTime endDateTime = today.atTime(23, 59, 59);
-
-    return orderRepository
-            .findByOrderStatusNotInAndCreatedAtBetweenOrderByCreatedAtDesc(
-                    List.of("PAID", "CANCELLED"),
-                    startDateTime,
-                    endDateTime
-            )
-            .stream()
-            .map(this::mapToOrderResponse)
-            .toList();
-}
 }
